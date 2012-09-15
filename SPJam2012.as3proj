@@ -16,7 +16,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="..\..\fp" />
+    <class path="..\..\Flash\fp" />
   </classpaths>
   <!-- Build options -->
   <build>

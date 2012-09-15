@@ -39,18 +39,16 @@ package robots
 		{
 			if (!collidedWall && !collidedBox)
 			{
-				if (this.collide("walls", x, y) ||
+				if (this.collide("breakBlock", x, y) ||
+					this.collide("pushBlock", x, y))
+				{
+					collidedBox = true;
+				}
+				else if (this.collide("walls", x, y) ||
 					this.x <= FP.world.camera.x || this.x >= FP.world.camera.x + 640 ||
 					this.y <= FP.world.camera.y || this.y >= FP.world.camera.y + 480)
 				{
 					collidedWall = true;
-				}
-				else if (this.collide("breakBlock", x, y) ||
-					this.collide("pushBlock", x, y) ||
-					this.x <= FP.world.camera.x || this.x >= FP.world.camera.x + 640 ||
-					this.y <= FP.world.camera.y || this.y >= FP.world.camera.y + 480)
-				{
-					collidedBox = true;
 				}
 				else
 				{

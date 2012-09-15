@@ -1,23 +1,19 @@
 package  
 {
 	import net.flashpunk.Entity;
-	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
-	import robots.Hammer;
-	import robots.Hookshot;
-	import robots.Shield;
 	
 	/**
 	 * ...
 	 * @author ...
 	 */
-	public class MenuCursor extends Entity 
+	public class MenuCursor extends Entity
 	{
 		
 		private var cursorImage : Image;
-		private var play : Boolean = true;
+		public var play : Boolean = true;
 		
 		public function MenuCursor() 
 		{
@@ -31,18 +27,19 @@ package
 			{
 				play = !play;
 			}
+			super.update();
+		}
+		
+		public function select():Boolean
+		{
 			if (Input.pressed("SELECTION"))
 			{
-				if (play)
-				{
-					FP.world = new GameArea (Assets.stage1, Assets.map1, Assets.water1, Assets.walls1, Assets.MAIN_SONG, [Hammer, Hookshot, Shield]);
-				}
-				else
-				{
-					//Credits
-				}
+				return true;
 			}
-			super.update();
+			else
+			{
+				return false;
+			}
 		}
 		
 		override public function render():void 

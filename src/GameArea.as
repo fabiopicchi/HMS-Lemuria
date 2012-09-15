@@ -30,7 +30,7 @@ package
 	 * ...
 	 * @author 
 	 */
-	public class GameArea extends World 
+	public class GameArea extends World
 	{
 		private var timer : Number = 0;
 		public var team : Array = [];
@@ -146,10 +146,12 @@ package
 				}
 				if (GameArea.arRobots.length == 3)
 				{
+					music.stop();
 					FP.world = new GameArea (Assets.stage2, Assets.map2, Assets.water2, Assets.walls2, Assets.MAIN_SONG, ar);
 				}
 				else
 				{
+					music.stop();
 					FP.world = new GameArea (Assets.stage3, Assets.map3, Assets.water3, Assets.walls3, Assets.ENDING_SONG, ar);
 				}
 			}
