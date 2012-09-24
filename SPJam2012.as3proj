@@ -16,7 +16,11 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
+<<<<<<< Updated upstream
     <class path="..\..\Flash\fp" />
+=======
+    <class path="..\SPJam-2012\fp" />
+>>>>>>> Stashed changes
   </classpaths>
   <!-- Build options -->
   <build>

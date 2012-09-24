@@ -2,6 +2,7 @@ package
 {
 	import com.greensock.TweenMax;
 	import config.TmxLoader;
+	import flash.geom.Point;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import interactables.BreakBlock;
@@ -33,14 +34,13 @@ package
 	public class GameArea extends World
 	{
 		private var timer : Number = 0;
-		public var team : Array = [];
+		private static var _team : Array = [];
 		
 		public var waterMap : Grid;
 		public var wallsMap : Grid;
 		private var room : Entity = new Entity (0, 0);
 		private var dialogBox : Entity = new Entity (180, 380);
 		private var tmxMap : TmxLoader;
-		public var leader : Robot;
 		
 		static public var stage : Class;
 		static public var map : Class;
@@ -75,61 +75,68 @@ package
 			
 			tmxMap = new TmxLoader (new stage ());
 			
+			//ground, water and walls separated for layering purposes
+			
+			//add ground
 			var tileMap : Tilemap = new Tilemap (Assets.TILESET, tmxMap.getLayerWidth("ground") * 32, tmxMap.getLayerHeight("ground") * 32, 32, 32);
 			parseTileMap (new map (), tileMap);
 			room.addGraphic(tileMap);
+			
+			//add water
 			tileMap = new Tilemap (Assets.TILESET, tmxMap.getLayerWidth("water") * 32, tmxMap.getLayerHeight("water") * 32, 32, 32);
 			parseTileMap (new water (), tileMap);
 			room.addGraphic(tileMap);
+			
+			//add walls
 			tileMap = new Tilemap (Assets.TILESET, tmxMap.getLayerWidth("walls") * 32, tmxMap.getLayerHeight("walls") * 32, 32, 32);
 			parseTileMap (new walls (), tileMap);
 			room.addGraphic(tileMap);
 			add(room);
 			
+			//water and walls separated for for collision logic
 			
-			//dialogBox.graphic = new Text ("One of them will be left behind...");
-			//add(dialogBox);
-			
+			//creates water collision mask
 			var e : Entity = new Entity (0, 0);
 			e.graphic = Image.createRect (tmxMap.getLayerWidth("water") * 32, tmxMap.getLayerHeight("water") * 32);
 			e.visible = false;
-			
 			waterMap = new Grid (tmxMap.getLayerWidth("water") * 32, tmxMap.getLayerHeight("water") * 32, 32, 32);
 			parseCollisionMap (new water (), waterMap);
 			e.mask = waterMap;
 			e.type = "water";
 			add(e);
 			
+			//creates walls collision mask
 			e = new Entity (0, 0);
 			e.graphic = Image.createRect (tmxMap.getLayerWidth("walls") * 32, tmxMap.getLayerHeight("walls") * 32);
 			e.visible = false;
-			
 			wallsMap = new Grid (tmxMap.getLayerWidth("walls") * 32, tmxMap.getLayerHeight("walls") * 32, 32, 32);
 			parseCollisionMap (new walls (), wallsMap);
 			e.mask = wallsMap;
 			e.type = "walls";
 			add(e);
 			
+			//add robots
 			for (var i : int = 0; i < arRobots.length; i++)
 			{
 				var cl : Class = arRobots[i];
-				team.push (new cl (0));
-				if (i > 0)
-				{
-					team[i - 1].follow(team[i]);
-				}
+				_team.unshift (new cl (0));
 			}
-			leader = team[i - 1];
 			
+			//place the robots according to the spawnpoint
 			var spawnPoint : Object = tmxMap.getObject("objects", "spawn")[0];
-			for (i = 0; i < team.length; i++)
+			for (i = 0; i < _team.length; i++)
 			{
-				team[i].x = parseInt(spawnPoint.x) + 30 * (team.length - i);
-				team[i].y = parseInt(spawnPoint.y);
-				add (team[i]);
+				_team[i].x = parseInt(spawnPoint.x) + 30 * i;
+				_team[i].y = parseInt(spawnPoint.y);
+				_team[i].direction = 2;
+				add (_team[i]);
 			}
+			sortDepth();
+			
+			//loads and adds objects from tmx map
 			loadMap(tmxMap);
 		}
+		
 		override public function update():void 
 		{
 			if (Input.pressed("SWAP"))
@@ -140,7 +147,7 @@ package
 			if (leader.y <= 0)
 			{
 				var ar : Array = [];
-				for each (var r : Robot in team)
+				for each (var r : Robot in _team)
 				{
 					ar.push (getDefinitionByName(getQualifiedClassName(r)));
 				}
@@ -182,57 +189,114 @@ package
 		
 		public function swap() : void
 		{
-			var first : Robot;
-			var last : Robot;
-			for (var i : int = 0; i < team.length; i++)
-			{
-				if (team [i].lead == null)
-				{
-					first = team [i];
-				}
-				
-				if (team [i].follower == null)
-				{
-					last = team [i];
-				}
-			}
-			first.follow(last);
+			var next : Point = new Point (_team [_team.length - 1].x, _team [_team.length - 1].y);
+			var current : Point = null;
 			
-			if (first.follower)
+			for (var i : int = 0; i < _team.length; i++)
 			{
-				var firstX : int = first.x;
-				var firstY : int = first.y;
+				current = new Point (_team[i].x, _team[i].y);
 				
-				first.x = first.lead.x;
-				first.y = first.lead.y;
+				_team[i].x = next.x;
+				_team[i].y = next.y;
 				
-				last.x = last.lead.x;
-				last.y = last.lead.y;
-				
-				first.follower.x = firstX;
-				first.follower.y = firstY;
-				
-				first.follower.follow (null);
-				leader = first.follower;
-				if (leader is Shield)
-				{
-					new Sfx (Assets.SHIELD_SOUND).play(0.2);
-				}
-				else if (leader is Hookshot)
-				{
-					new Sfx (Assets.HOOKSHOT_SOUND).play(0.2);
-				}
-				else if (leader is Hammer)
-				{
-					new Sfx (Assets.HAMMER_SOUND).play(0.2);
-				}
-				
-				
-				first.follower = null;
+				next = current;
+			}
+			
+			_team.push(_team.shift());
+			
+			sortDepth();
+			
+			if (leader is Shield)
+			{
+				new Sfx (Assets.SHIELD_SOUND).play(0.2);
+			}
+			else if (leader is Hookshot)
+			{
+				new Sfx (Assets.HOOKSHOT_SOUND).play(0.2);
+			}
+			else if (leader is Hammer)
+			{
+				new Sfx (Assets.HAMMER_SOUND).play(0.2);
 			}
 		}
 		
-		public function parseCollisionMap (tileMap : String, grid : Grid) : void
+		private function sortDepth () : void
+		{
+			for (var i : int = _team.length - 1; i >= 0; i--)
+			{
+				remove(_team[i]);
+				add(_team[i]);
+			}
+		}
+		
+		public static function get leader () : Robot
+		{
+			return _team[0];
+		}
+		
+		public static function get last () : Robot
+		{
+			return _team[_team.length - 1];
+		}
+		
+		public static function getMyLeader (me : Robot) : Robot
+		{
+			var index : int = _team.indexOf(me);
+			if (index > 0)
+			{
+				return _team [index - 1];
+			}
+			else
+			{
+				return null;
+			}
+		}
+		
+		public static function getMyFollower (me : Robot) : Robot
+		{
+			var index : int = _team.indexOf(me);
+			if (index < (_team.length - 1))
+			{
+				return _team [index + 1];
+			}
+			else
+			{
+				return null;
+			}
+		}
+		
+		//Robot formations
+		public static function collapse () : void
+		{
+			for each (var r : Robot in _team)
+			{
+				r.x = leader.x;
+				r.y = leader.y;
+			}
+		}
+		
+		public static function lookAtFixedDirection (dir : int) : void
+		{
+			for each (var r : Robot in _team)
+			{
+				r.direction = dir;
+			}
+		}
+		
+		public static function leaveFormation () : void
+		{
+			for each (var r : Robot in _team)
+			{
+				r.hasTarget = false;
+			}
+		}
+		
+		public static function abandonLeader () : void
+		{
+			_team.shift();
+		}
+		
+		private function parseCollisionMap (tileMap : String, grid : Grid) : void
 		{
 			var ar : Array = [];
 			var row : int = 0;
@@ -282,7 +346,7 @@ package
 			}
 		}
 		
-		public function parseTileMap (tileMap : String, tm : Tilemap) : void
+		private function parseTileMap (tileMap : String, tm : Tilemap) : void
 		{
 			var ar : Array = [];
 			var row : int = 0;

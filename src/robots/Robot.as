@@ -16,10 +16,8 @@ package robots
 	 * ...
 	 * @author 
 	 */
-	public class Robot extends Entity 
+	public class Robot extends CollidableEntity 
 	{		
-		private var _lead : Robot;
-		public var follower : Robot;
 		static protected const VELOCITY:Number = 5;
 		static protected const DIAG_VELOCITY:Number = 12.5;
 		static public const NEAR_RADIUS : int = 30;
@@ -32,12 +30,7 @@ package robots
 		private var timerPushX : Number = 0;
 		private var timerPushY : Number = 0;
 		
-		public var vx : Number = 0;
-		public var vy : Number = 0;
-		
 		public var direction : int;
-		
-		private var bLeader : Boolean = false;
 		
 		public function Robot(color : int, direction : int) 
 		{
@@ -50,12 +43,6 @@ package robots
 			super.added();
 		}
 		
-		public function follow (r : Robot) : void
-		{
-			_lead = r;
-			if (r) r.follower = this;
-		}
-		
 		override public function update():void 
 		{
 			this.move (VELOCITY);
@@ -66,7 +53,7 @@ package robots
 		public function move(speed : Number):void
 		{
 			//input update
-			if (_lead == null)
+			if (lead == null)
 			{
 				this.vx = 0;
 				this.vy = 0;
@@ -100,9 +87,9 @@ package robots
 			}
 			
 			
-			else if (_lead != null && !hasTarget)
+			else if (lead != null && !hasTarget)
 			{
-				if (this.distanceFrom(_lead) <= NEAR_RADIUS)
+				if (this.distanceFrom(lead) <= NEAR_RADIUS)
 				{
 					this.vx = 0;
 					this.vy = 0;
@@ -112,20 +99,20 @@ package robots
 					var distX : Number;
 					var distY : Number;
 					
-					if (_lead.vx != 0 && _lead.vy == 0 && this.y != _lead.y)
+					if (lead.vx != 0 && lead.vy == 0 && this.y != lead.y)
 					{
-						distY = this._lead.y - this.y;
+						distY = this.lead.y - this.y;
 						this.vy = (Math.abs(distY) < speed ? distY : speed * Math.abs(distY) / distY);
 					}
-					else if (_lead.vx == 0 && _lead.vy != 0 && this.x != _lead.x)
+					else if (lead.vx == 0 && lead.vy != 0 && this.x != lead.x)
 					{
-						distX = this._lead.x - this.x;
+						distX = this.lead.x - this.x;
 						this.vx = (Math.abs(distX) < speed ? distX : speed * Math.abs(distX) / distX);
 					}
 					else
 					{
-						this.vx = (_lead.x - this.x) / 10;
-						this.vy = (_lead.y - this.y) / 10;
+						this.vx = (lead.x - this.x) / 10;
+						this.vy = (lead.y - this.y) / 10;
 					}
 				}
 			}
@@ -138,9 +125,13 @@ package robots
 				var e : Entity;
 				//position update
 				this.x += this.vx;
+				
 				e = this.collide ("pushBlock", x, y);
 				if (e)
 				{
+					trace (this.collideAABB(this, (e as CollidableEntity)).x);
+					trace (this.collideAABB(this, (e as CollidableEntity)).y);
+					
 					if (vy == 0 && !(e as PushBlock).bMoving)
 					{
 						this.timerPushX += FP.elapsed;
@@ -396,32 +387,6 @@ package robots
 			super.moveTowards(x, y, amount, solidType, sweep);
 		}
 		
-		public function myBodyIsReady () : void
-		{
-			var team : Array = (FP.world as GameArea).team;
-			
-			for each (var r : Robot in team)
-			{
-				r.x = x;
-				r.y = y;
-			}
-		}
-		
-		public function freeAll():void
-		{
-			var team : Array = (FP.world as GameArea).team;
-			
-			for each (var r : Robot in team)
-			{
-				r.hasTarget = false;
-			}
-		}
-		
-		public function get lead():Robot 
-		{
-			return _lead;
-		}
-		
 		public function pullLever():void
 		{
 			var lever : Lever = this.collide("lever", x, y) as Lever;
@@ -431,12 +396,7 @@ package robots
 				lever.pull();
 				door.open();
 				this.dead = true;
-				
-				var team : Array = (FP.world as GameArea).team;
-				
-				this.follower._lead = null;
-				(FP.world as GameArea).leader = this.follower;
-				team.splice(team.indexOf(this), 1);
+				GameArea.abandonLeader ();
 			}
 		}
 		
@@ -471,6 +431,16 @@ package robots
 					y = Math.ceil(y / 32) * 32;
 				}
 			}
+		}
+		
+		public function get follower () : Robot
+		{
+			return GameArea.getMyFollower(this);
+		}
+		
+		public function get lead () : Robot
+		{
+			return GameArea.getMyLeader(this);
 		}
 	}
 

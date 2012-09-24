@@ -1,7 +1,5 @@
 package interactables 
 {
-	import com.greensock.easing.Quad;
-	import com.greensock.TweenLite;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
@@ -9,9 +7,12 @@ package interactables
 	 * ...
 	 * @author 
 	 */
-	public class PushBlock extends Entity
+	public class PushBlock extends CollidableEntity
 	{
 		public var bMoving : Boolean = false;
+		
+		private var targetX : Number = 0;
+		private var targetY : Number = 0;
 		
 		public function PushBlock() 
 		{
@@ -35,7 +36,9 @@ package interactables
 			{
 				if (!collide("walls", x + way * 32, y) && !collide("breakBlock", x + way * 32, y) && !collide("pushBlock", x + way * 32, y))
 				{
-					TweenLite.to(this, 0.5, { x : blockX + way * 32, ease : Quad.easeOut, onComplete : function () : void { bMoving = false; } } );
+					ax = -way * 0.01;
+					vx = way * Math.sqrt (2 * Math.abs(ax) * 32);
+					targetX = blockX + way * 32;
 				}
 				else
 				{
@@ -46,7 +49,9 @@ package interactables
 			{
 				if (!collide("walls", x, y + way * 32) && !collide("breakBlock", x, y + way * 32) && !collide("pushBlock", x, y + way * 32))
 				{
-					TweenLite.to(this, 0.5, { y : blockY + way * 32, ease : Quad.easeOut, onComplete : function () : void { bMoving = false; } } );
+					ay = -way * 0.01;
+					vy = way * Math.sqrt (2 * Math.abs(ay) * 32);
+					targetY = blockY + way * 32;
 				}
 				else
 				{
@@ -63,6 +68,28 @@ package interactables
 		override public function update():void 
 		{
 			super.update();
+			if (bMoving)
+			{
+				x += vx;
+				y += vy;
+				
+				if (Math.abs (vx) - Math.abs (ax) < 0)
+				{
+					vx = 0;
+					ax = 0;
+					bMoving = false;
+					x = targetX;
+				}
+				vx += ax;
+				if (Math.abs (vy) - Math.abs (ay) < 0)
+				{
+					vy = 0;
+					ay = 0;
+					bMoving = false;
+					y = targetY;
+				}
+				vy += ay;
+			}
 		}
 		
 		override public function render():void 

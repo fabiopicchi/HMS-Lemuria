@@ -65,7 +65,7 @@ package robots
 				if (bArrived && !this.lead && !bAction)
 				{
 					bArrived = false;
-					this.freeAll();
+					GameArea.leaveFormation();
 				}
 				if (bAction)
 				{

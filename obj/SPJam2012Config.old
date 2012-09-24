@@ -16,6 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
+<<<<<<< Updated upstream
       <value>'15/09/2012'</value>
     </define>
     <verbose-stacktraces>true</verbose-stacktraces>
@@ -31,6 +32,23 @@
   </compiler>
   <file-specs>
     <path-element>C:\Users\Arthur\Documents\GitHub\HMS-Lemuria\src\Game.as</path-element>
+=======
+      <value>'24/09/2012'</value>
+    </define>
+    <verbose-stacktraces>true</verbose-stacktraces>
+    <source-path append="true">
+      <path-element>C:\Users\Fabio\Documents\AS3 Projects\HMS Lumeria\src</path-element>
+      <path-element>C:\Users\Fabio\Documents\AS3 Projects\SPJam-2012\fp</path-element>
+      <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
+    </source-path>
+    <library-path append="true">
+      <path-element>C:\Users\Fabio\Documents\AS3 Projects\HMS Lumeria\lib\as3corelib.swc</path-element>
+      <path-element>C:\Users\Fabio\Documents\AS3 Projects\HMS Lumeria\lib\greensock.swc</path-element>
+    </library-path>
+  </compiler>
+  <file-specs>
+    <path-element>C:\Users\Fabio\Documents\AS3 Projects\HMS Lumeria\src\Game.as</path-element>
+>>>>>>> Stashed changes
   </file-specs>
   <default-background-color>#FFFFFF</default-background-color>
   <default-frame-rate>30</default-frame-rate>

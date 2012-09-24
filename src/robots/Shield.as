@@ -66,7 +66,7 @@ package robots
 					bAction = true;
 					super.move(Robot.VELOCITY / 3);
 					updateData();
-					fixDirection (fixedDirection);
+					GameArea.lookAtFixedDirection (fixedDirection);
 					this.cluster();
 				}
 				else
@@ -78,8 +78,8 @@ package robots
 				}
 				if (Input.released ("ACTION") && !this.lead)
 				{
-					this.myBodyIsReady ();
-					this.freeAll();
+					//this.myBodyIsReady ();
+					//this.freeAll();
 				}
 				
 				this.pullLever();
@@ -130,16 +130,6 @@ package robots
 					this.steamHandle.streamLength = this.steamHandle.maxLength;
 					this.steamHandle = null;
 				}
-			}
-		}
-		
-		public function fixDirection (dir : int) : void
-		{
-			var team : Array = (FP.world as GameArea).team;
-			
-			for each (var r : Robot in team)
-			{
-				r.direction = dir;
 			}
 		}
 	}
