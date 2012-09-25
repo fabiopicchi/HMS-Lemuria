@@ -17,113 +17,113 @@ package traps
 		public var period : Number;
 		public var direction : int;
 		public var way : int;
-		private var _trackLength : Number;
+		public var _trackLength : Number;
+		private var x0 : Number;
+		private var y0 : Number;
 		
 		public function Gear() 
 		{
 			animation.add("spin", [0, 1, 2, 3]);
 			this.type = "gear";
-			graphic = animation;
+			addGraphic(animation);
 		}
 		
 		public function setup (obj : Object) : void
 		{
 			this.x = obj.x;
 			this.y = obj.y;
-			_trackLength = obj.size * 32;
+			x0 = x;
+			y0 = y;
+			way = 1;
+			_trackLength = (obj.size - 1) * 32;
 			this.period = obj.period;
 			this.direction = obj.direction;
 		}
 		
 		override public function update():void 
 		{
+			
 			var vx : Number;
 			var vy : Number;
 			var absSpeed : Number = _trackLength / (period / 2);
 			
 			if (direction == 0)
 			{
-				vx = 0;
-				vy = - absSpeed;
-				if (y <= 0)
+				if ((y - absSpeed * way * FP.elapsed) < y0 - _trackLength)
 				{
-					way = -1;
+					y = y0 - _trackLength;
+					way *= -1;
 				}
-				else if (y >= _trackLength)
+				else if ((y - absSpeed * way * FP.elapsed) > y0)
 				{
-					way = 1;
+					y = y0;
+					way *= -1;
+				}
+				else
+				{
+					y -= absSpeed * way * FP.elapsed;
 				}
 			}
 			else if (direction == 1)
 			{
-				vx  = absSpeed;
-				vy = 0;
-				if (x >= _trackLength)
+				if ((x + absSpeed * way * FP.elapsed) > x0 + _trackLength)
 				{
-					way = -1;
+					x = x0 + _trackLength;
+					way *= -1;
 				}
-				else if (x <= 0)
+				else if ((x + absSpeed * way * FP.elapsed) < x0)
 				{
-					way = 1;
+					x = x0;
+					way *= -1;
+				}
+				else
+				{
+					x += absSpeed * way * FP.elapsed;
 				}
 			}
 			else if (direction == 2)
 			{
-				vx = 0;
-				vy = absSpeed;
-				if (y >= _trackLength)
+				if ((y + absSpeed * way * FP.elapsed) > y0 + _trackLength)
 				{
-					way = -1;
+					y = y0 + _trackLength;
+					way *= -1;
 				}
-				else if (y <= 0)
+				else if ((y + absSpeed * way * FP.elapsed) < y0)
 				{
-					way = 1;
+					y = y0;
+					way *= -1;
+				}
+				else
+				{
+					y += absSpeed * way * FP.elapsed;
 				}
 			}
-			else
+			else if (direction == 3)
 			{
-				vx = - absSpeed;
-				vy = 0;
-				if (x <= 0)
+				if ((x - absSpeed * way * FP.elapsed) < x0 - _trackLength)
 				{
-					way = -1;
+					x = x0 - _trackLength;
+					way *= -1;
 				}
-				else if (x >= _trackLength)
+				else if ((x - absSpeed * way * FP.elapsed) > x0)
 				{
-					way = 1;
+					x = x0;
+					way *= -1;
+				}
+				else
+				{
+					x -= absSpeed * way * FP.elapsed;
 				}
 			}
 			
-			if ((x + vx * way) > _trackLength)
-			{
-				x = _trackLength;
-			}
-			else if ((x + vx * way) < 0)
-			{
-				x = 0;
-			}
-			else
-			{
-				x += vx * way;
-			}
+			animation.play("spin");
 			
-			if ((y + vy * way) > _trackLength)
-			{
-				y = _trackLength;
-			}
-			else if ((y + vy * way) < 0)
-			{
-				y = 0;
-			}
-			else
-			{
-				y += vy * way;
-			}
 		}
 		
 		override public function render():void 
 		{
-			animation.play("spin");
+			
+			super.render();
 		}
 		
 	}
