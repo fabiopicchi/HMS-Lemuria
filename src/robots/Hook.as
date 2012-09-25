@@ -1,5 +1,7 @@
 package robots 
 {
+	import collision.CollidableEntity;
+	import collision.CollisionResult;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
@@ -9,26 +11,28 @@ package robots
 	 * ...
 	 * @author ...
 	 */
-	public class Hook extends Entity 
+	public class Hook extends CollidableEntity 
 	{
 		private var hookSpeed : Number = 10;
 		public var originalX : Number;
 		public var originalY : Number;
 		public var direction : int;
 		private var way : int;
-		private var vx : Number;
-		private var vy : Number;
 		private var collidedWall : Boolean = false;
 		private var collidedBox : Boolean = false;
 		public var hookshot : Hookshot;
 		public var animation : Spritemap = new Spritemap (Assets.HOOK, 32, 32);
+		private static const arCollideable : Array = ["pushBlock", "breakBlock", "touchingDoor", "door"];
+		
 		
 		public function Hook(hookshot : Hookshot) 
 		{
 			this.hookshot = hookshot;
 			way = 1;
 			graphic = animation;
-			setHitbox(32, 32);
+			setHitbox(26, 26);
+			graphic.x = -3;
+			graphic.y = -3;
 			animation.add("STAND_DOWN", [0]);
 			animation.add("STAND_RIGHT", [1]);
 			animation.add("STAND_UP", [2]);
@@ -39,13 +43,43 @@ package robots
 		{
 			if (!collidedWall && !collidedBox)
 			{
-				if (this.collide("breakBlock", x, y) ||
-					this.collide("pushBlock", x, y))
+				var arEntities : Array = [];
+				var result : CollisionResult;
+				var entity : CollidableEntity;
+				
+				//add Entities to collision array
+				for each (var type : String in arCollideable)
 				{
-					collidedBox = true;
+					FP.world.getType(type, arEntities);
 				}
-				else if (this.collide("walls", x, y) ||
-					this.x <= FP.world.camera.x || this.x >= FP.world.camera.x + 640 ||
+				
+				//add tilemap to collision array
+				var row : Number = Math.floor (x / 32);
+				var col : Number = Math.floor (y / 32);
+				var i : Number;
+				var j : Number;
+				for (i = row - 1; i < row + 2; i++)
+				{
+					for (j = col - 1; j < col + 2; j++)
+					{
+						if (GameArea.wallsMap.getTile(i, j))
+						{
+							entity = new CollidableEntity ();
+							entity.x = i * 32;
+							entity.y = j * 32;
+							entity.width = 32;
+							entity.height = 32;
+							arEntities.push (entity);
+						}
+					}
+				}
+				
+				for each (entity in arEntities)
+				{
+					reactCollisionEntities(entity);
+				}
+				
+				if (this.x <= FP.world.camera.x || this.x >= FP.world.camera.x + 640 ||
 					this.y <= FP.world.camera.y || this.y >= FP.world.camera.y + 480)
 				{
 					collidedWall = true;
@@ -70,6 +104,31 @@ package robots
 				}
 			}
 			return false;
+		}
+		
+		private function reactCollisionEntities(e:CollidableEntity):void 
+		{
+			switch (e.type)
+			{
+				case "pushBlock":
+					if (collideAABB(e).willCollide)
+					{
+						collidedBox = true;
+					}
+					break;
+				case "breakBlock":
+					if (collideAABB(e).willCollide)
+					{
+						collidedBox = true;
+					}
+					break;
+				default:
+					if (collideAABB(e).willCollide)
+					{
+						collidedWall = true;
+					}
+					break;
+			}
 		}
 		
 		private function launch(e : Entity):void
@@ -127,9 +186,7 @@ package robots
 			hookshot.line();
 			launch(hookshot);
 			if (hookshot.collide("breakBlock", hookshot.x, hookshot.y) ||
-				hookshot.collide("pushBlock", hookshot.x, hookshot.y) ||
-				hookshot.x <= FP.world.camera.x || hookshot.x >= FP.world.camera.x + 640 ||
-				hookshot.y <= FP.world.camera.y || hookshot.y >= FP.world.camera.y + 480)
+				hookshot.collide("pushBlock", hookshot.x, hookshot.y))
 			{
 				if (vx > 0)
 				{

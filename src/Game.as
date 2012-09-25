@@ -32,6 +32,7 @@ package
 		override public function init():void 
 		{
 			// entry point
+			FP.screen.scale = 2;
 			FP.world = new MainMenu();
 		}
 		

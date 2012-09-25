@@ -183,6 +183,9 @@ package traps
 								for (i = 0; i < 5; i++)
 								{
 									emitter.emit("steam", this.x + emitX - 7, this.y + emitY - 7);
+								}
+								if (timer >= 0.55 * period)
+								{
 									on = true;
 								}
 							}

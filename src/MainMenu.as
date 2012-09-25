@@ -27,7 +27,7 @@ package
 			cursor = new MenuCursor();
 			add(cursor);
 			menuSong = new Sfx(Assets.MENU_SONG);
-			menuSong.loop();
+			//menuSong.loop();
 		}
 		
 		override public function update():void 

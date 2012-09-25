@@ -12,8 +12,6 @@ package robots
 	 */
 	public class Shield extends Robot 
 	{
-		
-		public var shieldStance : Boolean = false;
 		public var fixedDirection : int;
 		public var second : Robot;
 		public var third : Robot;
@@ -51,85 +49,83 @@ package robots
 		{
 			if (!this.dead)
 			{
-				if (Input.pressed ("ACTION") && !this.lead)
+				if (Input.check ("ACTION") && !this.lead && !this.bInteractableInRange)
 				{
-					fixedDirection = direction;
-					
-					if (direction == 3) animation.play("ATTACK_UP");
-					else if (direction == 0) animation.play("ATTACK_RIGHT");
-					else if (direction == 1) animation.play("ATTACK_DOWN");
-					else if (direction == 2) animation.play("ATTACK_LEFT");
-				}
-				if (Input.check ("ACTION") && !this.lead)
-				{
-					shieldStance = true;
+					if (!bAction) fixedDirection = direction;
 					bAction = true;
 					super.move(Robot.VELOCITY / 3);
-					updateData();
 					GameArea.lookAtFixedDirection (fixedDirection);
 					this.cluster();
 				}
 				else
 				{
-					shieldStance = false;
-					bAction = false;
 					super.move(Robot.VELOCITY);
-					super.updateData();
 				}
+				super.updateData();
+				
 				if (Input.released ("ACTION") && !this.lead)
 				{
-					//this.myBodyIsReady ();
-					//this.freeAll();
+					bAction = false;
+					GameArea.leaveFormation();
 				}
 				
-				this.pullLever();
-				this.takeKey();
-				this.unlockTouchingDoor();
-				
-				if(vx==0 && vy==0 && bAction==false){
-					if (direction == 3) animation.play("STAND_UP");
-					else if (direction == 0) animation.play("STAND_RIGHT");
-					else if (direction == 1) animation.play("STAND_DOWN");
-					else if (direction == 2) animation.play("STAND_LEFT");
-				}else if(bAction==false) {
-					if (direction == 3) animation.play("WALK_UP");
-					else if (direction == 0) animation.play("WALK_RIGHT");
-					else if (direction == 1) animation.play("WALK_DOWN");
-					else if (direction == 2) animation.play("WALK_LEFT");
-				}
-				
-				var steam : SteamHitBox = collide ("steam", x, y) as SteamHitBox;
-				if (steam && !this.lead)
+				if (!bAction)
 				{
-					this.steamHandle = steam.steamHandle;
-					if (steam.steamHandle.direction == 0 && this.direction == 1 && this.shieldStance)
-					{
-						steam.steamHandle.streamLength = - (this.y + this.height - (steam.steamHandle.y + steam.steamHandle.emitY - 7));
+					if (vx==0 && vy==0){
+						if (direction == 3) animation.play("STAND_UP");
+						else if (direction == 0) animation.play("STAND_RIGHT");
+						else if (direction == 1) animation.play("STAND_DOWN");
+						else if (direction == 2) animation.play("STAND_LEFT");
 					}
-					else if (steam.steamHandle.direction == 1 && this.direction == 2 && this.shieldStance)
-					{
-						steam.steamHandle.streamLength = - (this.x - (steam.steamHandle.x + steam.steamHandle.emitX - 7));
-					}
-					else if (steam.steamHandle.direction == 2 && this.direction == 3 && this.shieldStance)
-					{
-						steam.steamHandle.streamLength = (this.y - (steam.steamHandle.y + steam.steamHandle.emitY - 7));
-					}
-					else if (steam.steamHandle.direction == 3 && this.direction == 0 && this.shieldStance)
-					{
-						steam.steamHandle.streamLength = (this.x + this.width - (steam.steamHandle.x + steam.steamHandle.emitX - 7));
-					}
-					else
-					{
-						this.steamHandle.streamLength = this.steamHandle.maxLength;
-						this.steamHandle = null;
-						FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
+					else {
+						if (direction == 3) animation.play("WALK_UP");
+						else if (direction == 0) animation.play("WALK_RIGHT");
+						else if (direction == 1) animation.play("WALK_DOWN");
+						else if (direction == 2) animation.play("WALK_LEFT");
 					}
 				}
-				else if (this.steamHandle)
+				else
+				{
+					if (fixedDirection == 3) animation.play("ATTACK_UP");
+					else if (fixedDirection == 0) animation.play("ATTACK_RIGHT");
+					else if (fixedDirection == 1) animation.play("ATTACK_DOWN");
+					else if (fixedDirection == 2) animation.play("ATTACK_LEFT");
+				}
+			}
+		}
+		
+		override protected function handleSteamCollision(steam:SteamHitBox):void 
+		{
+			this.steamHandle = steam.steamHandle;
+			if (this.collideWith (steam, x, y) && !this.lead && steamHandle.on)
+			{
+				if (steam.steamHandle.direction == 0 && this.bAction && this.fixedDirection == 1)
+				{
+					steam.steamHandle.streamLength = - (this.y + this.height - (steam.steamHandle.y + steam.steamHandle.emitY - 7));
+				}
+				else if (steam.steamHandle.direction == 1 && this.bAction && this.fixedDirection == 2)
+				{
+					steam.steamHandle.streamLength = (this.x - (steam.steamHandle.x + steam.steamHandle.emitX - 7));
+				}
+				else if (steam.steamHandle.direction == 2 && this.bAction && this.fixedDirection == 3)
+				{
+					steam.steamHandle.streamLength = (this.y - (steam.steamHandle.y + steam.steamHandle.emitY - 7));
+				}
+				else if (steam.steamHandle.direction == 3 && this.bAction && this.fixedDirection == 0)
+				{
+					steam.steamHandle.streamLength = - (this.x + this.width - (steam.steamHandle.x + steam.steamHandle.emitX - 7));
+				}
+				else
 				{
 					this.steamHandle.streamLength = this.steamHandle.maxLength;
 					this.steamHandle = null;
+					FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
 				}
+			}
+			else if (this.steamHandle)
+			{
+				this.steamHandle.streamLength = this.steamHandle.maxLength;
+				this.steamHandle = null;
 			}
 		}
 	}

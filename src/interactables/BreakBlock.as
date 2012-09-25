@@ -1,5 +1,6 @@
 package interactables 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
@@ -7,7 +8,7 @@ package interactables
 	 * ...
 	 * @author 
 	 */
-	public class BreakBlock extends Entity
+	public class BreakBlock extends CollidableEntity
 	{
 		public var animation : Spritemap = new Spritemap (Assets.BREAKABLE_BLOCK, 32, 32);
 		

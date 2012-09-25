@@ -1,12 +1,13 @@
 package interactables 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Image;
 	/**
 	 * ...
 	 * @author 
 	 */
-	public class TouchingDoor extends Entity
+	public class TouchingDoor extends CollidableEntity
 	{
 		
 		public function TouchingDoor() 

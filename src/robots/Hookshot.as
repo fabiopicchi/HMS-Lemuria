@@ -47,9 +47,18 @@ package robots
 		{
 			if (!this.dead)
 			{
-				if (Input.pressed ("ACTION") && !this.lead && !bAction)
+				if (bAction)
+				{
+					if (hook.shoot())
+					{
+						bAction = false;
+					}
+				}
+				else if (Input.pressed ("ACTION") && !this.lead && !bInteractableInRange)
 				{
 					bAction = true;
+					vx = 0;
+					vy = 0;
 					hook.x = this.x;
 					hook.y = this.y;
 					hook.originalX = this.x;
@@ -62,27 +71,16 @@ package robots
 					else if (direction == 1) animation.play("ATTACK_DOWN");
 					else if (direction == 2) animation.play("ATTACK_LEFT");
 				}
-				if (bArrived && !this.lead && !bAction)
+				else if (bArrived && !this.lead)
 				{
 					bArrived = false;
 					GameArea.leaveFormation();
 				}
-				if (bAction)
-				{
-					if (hook.shoot())
-					{
-						bAction = false;
-					}
-				}
 				else
 				{
 					super.move(Robot.VELOCITY);
-					super.updateData();
 				}
-				
-				this.pullLever();
-				this.takeKey();
-				this.unlockTouchingDoor();
+				super.updateData();
 				
 				if(vx==0 && vy==0 && bAction==false){
 					if (direction == 3) animation.play("STAND_UP");
@@ -95,6 +93,7 @@ package robots
 					else if (direction == 1) animation.play("WALK_DOWN");
 					else if (direction == 2) animation.play("WALK_LEFT");
 				}
+				
 				var steam : SteamHitBox = collide ("steam", x, y) as SteamHitBox;
 				if (!this.lead && steam && steam.steamHandle.on)
 				{

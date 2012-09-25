@@ -36,8 +36,8 @@ package
 		private var timer : Number = 0;
 		private static var _team : Array = [];
 		
-		public var waterMap : Grid;
-		public var wallsMap : Grid;
+		public static var waterMap : Grid;
+		public static var wallsMap : Grid;
 		private var room : Entity = new Entity (0, 0);
 		private var dialogBox : Entity = new Entity (180, 380);
 		private var tmxMap : TmxLoader;
@@ -64,7 +64,7 @@ package
 		public function GameArea(stage : Class, map : Class, water : Class, walls : Class, song : Class, arRobots : Array) 
 		{
 			music = new Sfx (song);
-			music.loop();
+			//music.loop();
 			
 			GameArea.arRobots = arRobots;
 			GameArea.stage = stage;
@@ -93,29 +93,16 @@ package
 			room.addGraphic(tileMap);
 			add(room);
 			
-			//water and walls separated for for collision logic
-			
 			//creates water collision mask
-			var e : Entity = new Entity (0, 0);
-			e.graphic = Image.createRect (tmxMap.getLayerWidth("water") * 32, tmxMap.getLayerHeight("water") * 32);
-			e.visible = false;
 			waterMap = new Grid (tmxMap.getLayerWidth("water") * 32, tmxMap.getLayerHeight("water") * 32, 32, 32);
 			parseCollisionMap (new water (), waterMap);
-			e.mask = waterMap;
-			e.type = "water";
-			add(e);
 			
 			//creates walls collision mask
-			e = new Entity (0, 0);
-			e.graphic = Image.createRect (tmxMap.getLayerWidth("walls") * 32, tmxMap.getLayerHeight("walls") * 32);
-			e.visible = false;
 			wallsMap = new Grid (tmxMap.getLayerWidth("walls") * 32, tmxMap.getLayerHeight("walls") * 32, 32, 32);
 			parseCollisionMap (new walls (), wallsMap);
-			e.mask = wallsMap;
-			e.type = "walls";
-			add(e);
 			
 			//add robots
+			_team = [];
 			for (var i : int = 0; i < arRobots.length; i++)
 			{
 				var cl : Class = arRobots[i];

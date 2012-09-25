@@ -1,5 +1,6 @@
 package interactables 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
@@ -13,6 +14,8 @@ package interactables
 		
 		private var targetX : Number = 0;
 		private var targetY : Number = 0;
+		public var timerPushX : Number = 0;
+		public var timerPushY : Number = 0;
 		
 		public function PushBlock() 
 		{

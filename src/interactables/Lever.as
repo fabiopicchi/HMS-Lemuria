@@ -1,5 +1,6 @@
 package interactables 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
@@ -8,7 +9,7 @@ package interactables
 	 * ...
 	 * @author ...
 	 */
-	public class Lever extends Entity 
+	public class Lever extends CollidableEntity 
 	{
 		
 		public var pulled : Boolean = false;

@@ -1,7 +1,10 @@
 package robots 
 {
+	import collision.CollidableEntity;
+	import collision.CollisionResult;
 	import com.greensock.TweenLite;
 	import flash.geom.Point;
+	import flash.utils.getQualifiedClassName;
 	import interactables.Door;
 	import interactables.Key;
 	import interactables.Lever;
@@ -10,7 +13,9 @@ package robots
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
+	import net.flashpunk.masks.Grid;
 	import net.flashpunk.utils.Input;
+	import traps.SteamHitBox;
 	
 	/**
 	 * ...
@@ -26,9 +31,8 @@ package robots
 		public var blockHandle : PushBlock;
 		public var hasTarget : Boolean = false;
 		protected var dead : Boolean = false;
-		
-		private var timerPushX : Number = 0;
-		private var timerPushY : Number = 0;
+		protected var bInteractableInRange : Boolean = false;
+		private static const arCollideable : Array = ["pushBlock", "breakBlock", "touchingDoor", "door", "key", "lever", "steam"];
 		
 		public var direction : int;
 		
@@ -120,108 +124,6 @@ package robots
 		
 		protected function updateData () : void
 		{
-			if (!this.hasTarget)
-			{
-				var e : Entity;
-				//position update
-				this.x += this.vx;
-				
-				e = this.collide ("pushBlock", x, y);
-				if (e)
-				{
-					trace (this.collideAABB(this, (e as CollidableEntity)).x);
-					trace (this.collideAABB(this, (e as CollidableEntity)).y);
-					
-					if (vy == 0 && !(e as PushBlock).bMoving)
-					{
-						this.timerPushX += FP.elapsed;
-						if (timerPushX >= 0.25)
-						{
-							(e as PushBlock).bMoving = true;
-							this.timerPushX = 0;
-							(e as PushBlock).move(0, FP.sign (vx));
-						}
-					}
-					else
-					{
-						this.timerPushX = 0;
-					}
-					if (FP.sign (this.vx) > 0)
-					{
-						vx = 0;
-						x = e.x - width;
-					}
-					else
-					{
-						vx = 0;
-						x = e.x + e.width;
-					}
-				}
-				else
-				{
-					this.timerPushX = 0;
-				}
-				if (this.collide ("water", x, y) || this.collide ("breakBlock", x, y) || this.collide ("walls", x, y)
-					|| this.collide("door", x, y))
-				{
-					if (vx > 0)
-					{
-						vx = 0;
-						x = Math.ceil(x / 32) * 32 - width;
-					}
-					else if (vx < 0)
-					{
-						vx = 0;
-						x = Math.ceil(x / 32) * 32;
-					}
-				}
-				
-				this.y += this.vy;
-				e = this.collide ("pushBlock", x, y);
-				if (e)
-				{
-					if (vx == 0 && !(e as PushBlock).bMoving)
-					{
-						this.timerPushY += FP.elapsed;
-						if (timerPushY >= 0.5)
-						{
-							(e as PushBlock).bMoving = true;
-							this.timerPushY = 0;
-							(e as PushBlock).move(1, FP.sign (vy));
-						}
-					}
-					if (FP.sign (this.vy) > 0)
-					{
-						vy = 0;
-						y = e.y - height;
-					}
-					else
-					{
-						vy = 0;
-						y = e.y + e.height;
-					}
-				}
-				else
-				{
-					this.timerPushY = 0;
-				}
-				
-				if (this.collide ("water", x, y) || this.collide ("breakBlock", x, y) || this.collide ("walls", x, y)
-					|| this.collide("door", x, y))
-				{
-					if (this.vy > 0)
-					{
-						vy = 0;
-						y = Math.ceil(y / 32) * 32 - height;
-					}
-					else if (this.vy < 0)
-					{
-						vy = 0;
-						y = Math.ceil(y / 32) * 32;
-					}
-				}
-			}
-			
 			//direction update
 			if (vy == 0)
 			{
@@ -261,6 +163,144 @@ package robots
 			{
 				direction = 0;
 			}
+			
+			if (!this.hasTarget)
+			{
+				var arEntities : Array = [];
+				var result : CollisionResult;
+				var entity : CollidableEntity;
+				
+				bInteractableInRange = false;
+				
+				//add Entities to collision array
+				for each (var type : String in arCollideable)
+				{
+					FP.world.getType(type, arEntities);
+				}
+				
+				//add tilemap to collision array
+				var row : Number = Math.floor (x / 32);
+				var col : Number = Math.floor (y / 32);
+				var i : Number;
+				var j : Number;
+				for (i = row - 1; i < row + 2; i++)
+				{
+					for (j = col - 1; j < col + 2; j++)
+					{
+						if (GameArea.wallsMap.getTile(i, j) || GameArea.waterMap.getTile(i, j))
+						{
+							entity = new CollidableEntity ();
+							entity.x = i * 32;
+							entity.y = j * 32;
+							entity.width = 32;
+							entity.height = 32;
+							arEntities.push (entity);
+						}
+					}
+				}
+				
+				//process collisions
+				for each (entity in arEntities)
+				{
+					reactCollisionEntities(entity);
+				}
+				
+				
+				this.x += this.vx;
+				this.y += this.vy;
+			}
+		}
+		
+		protected function reactCollisionEntities(e : CollidableEntity) : void
+		{
+			switch (e.type)
+			{
+				case "pushBlock":
+					var result : CollisionResult = collideAABB(e);
+					if (result.willCollide)
+					{
+						if (!(e as PushBlock).bMoving)
+						{
+							if (result.minTranslationVector.x != 0)
+							{
+								(e as PushBlock).timerPushX += FP.elapsed;
+								if ((e as PushBlock).timerPushX >= 0.25)
+								{
+									(e as PushBlock).bMoving = true;
+									(e as PushBlock).timerPushX = 0;
+									(e as PushBlock).move(0, FP.sign (result.minTranslationVector.x));
+								}
+							}
+							else
+							{
+								(e as PushBlock).timerPushX = 0;
+							}
+							if (result.minTranslationVector.y != 0)
+							{
+								(e as PushBlock).timerPushY += FP.elapsed;
+								if ((e as PushBlock).timerPushY >= 0.25)
+								{
+									(e as PushBlock).bMoving = true;
+									(e as PushBlock).timerPushY = 0;
+									(e as PushBlock).move(1, FP.sign (result.minTranslationVector.y));
+								}
+							}
+							else
+							{
+								(e as PushBlock).timerPushY = 0;
+							}
+						}
+					}
+					else if (!this.lead)
+					{
+						(e as PushBlock).timerPushX = 0;
+						(e as PushBlock).timerPushY = 0;
+					}
+					break;
+				case "touchingDoor":
+					if (collideAABB(e).willCollide && keyCount > 0)
+					{
+						keyCount--;
+						FP.world.remove(e);
+					}
+					break;
+				case "key":
+					if (this.collideWith (e, x, y))
+					{
+						keyCount++;
+						FP.world.remove(e);
+					}
+					break;
+				case "lever":
+					//If lever is not pulled and this is the leader, let him die
+					if (this.collideWith (e, x, y) && !(e as Lever).pulled && !this.lead)
+					{
+						bInteractableInRange = true;
+						if (Input.pressed ("ACTION"))
+						{
+							var door : Door = FP.world.getInstance("finalDoor");
+							(e as Lever).pull();
+							door.open();
+							this.dead = true;
+							GameArea.abandonLeader ();
+						}
+					}
+					break;
+				case "steam":
+					handleSteamCollision(e as SteamHitBox);
+					break;
+				default:
+					collideAABB(e);
+					break;
+			}
+		}
+		
+		protected function handleSteamCollision (e : SteamHitBox) : void
+		{
+			if (this.collideWith (e, x, y) && (e as SteamHitBox).steamHandle.on)
+			{
+				FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
+			}
 		}
 		
 		public function cluster():void
@@ -284,6 +324,11 @@ package robots
 			
 			if (teamSize == 3)
 			{
+				second.vx = 0;
+				second.vy = 0;
+				
+				third.vx = 0;
+				third.vy = 0;
 				if (this.direction == 0)
 				{
 					second.moveTowards(this.x - this.halfWidth, this.y - this.halfHeight, clusterSpeed);
@@ -307,6 +352,9 @@ package robots
 			}
 			else if (teamSize == 2)
 			{
+				second.vx = 0;
+				second.vy = 0;
+				
 				if (this.direction == 0)
 				{
 					second.moveTowards(this.x - this.halfWidth, this.y, clusterSpeed);
@@ -378,59 +426,9 @@ package robots
 		
 		override public function moveTowards(x:Number, y:Number, amount:Number, solidType:Object = null, sweep:Boolean = false):void 
 		{
-			
-			if (x == this.x && y == this.y)
-			{
-				this.hasTarget = false;
-			}
+			this.hasTarget = true;
 			
 			super.moveTowards(x, y, amount, solidType, sweep);
-		}
-		
-		public function pullLever():void
-		{
-			var lever : Lever = this.collide("lever", x, y) as Lever;
-			var door : Door = FP.world.getInstance("finalDoor");
-			if (Input.pressed ("ACTION") && lever && !lever.pulled)
-			{
-				lever.pull();
-				door.open();
-				this.dead = true;
-				GameArea.abandonLeader ();
-			}
-		}
-		
-		public function takeKey():void
-		{
-			var key : Key = this.collide("key", x, y) as Key;
-			if (key)
-			{
-				keyCount++;
-				FP.world.remove(key);
-			}
-		}
-		
-		public function unlockTouchingDoor():void
-		{
-			var touchingDoor : TouchingDoor = this.collide("touchingDoor", x, y) as TouchingDoor;
-			if (touchingDoor && keyCount > 0)
-			{
-				keyCount--;
-				FP.world.remove(touchingDoor);
-			}
-			else if (touchingDoor && keyCount <= 0)
-			{
-				if (this.vy > 0)
-				{
-					vy = 0;
-					y = Math.ceil(y / 32) * 32 - height;
-				}
-				else if (this.vy < 0)
-				{
-					vy = 0;
-					y = Math.ceil(y / 32) * 32;
-				}
-			}
 		}
 		
 		public function get follower () : Robot

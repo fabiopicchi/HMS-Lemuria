@@ -1,19 +1,20 @@
 package interactables 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Spritemap;
 	/**
 	 * ...
 	 * @author 
 	 */
-	public class Door extends Entity
+	public class Door extends CollidableEntity
 	{
-		public var animation : Spritemap = new Spritemap (Assets.TOUNCHING_DOOR, 96, 32);
+		public var animation : Spritemap = new Spritemap (Assets.DOOR, 128, 32);
 		
 		public function Door() 
 		{
 			this.type = "door";
-			this.setHitbox(96, 32);
+			this.setHitbox(128, 32);
 			animation.add("ON", [0]);
 			animation.add("OFF", [1]);
 			animation.play ("ON");

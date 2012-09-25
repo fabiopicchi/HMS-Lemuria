@@ -1,11 +1,12 @@
 package traps 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.Entity;
 	/**
 	 * ...
 	 * @author 
 	 */
-	public class SteamHitBox extends Entity
+	public class SteamHitBox extends CollidableEntity
 	{
 		public var steamHandle : Steam;
 		

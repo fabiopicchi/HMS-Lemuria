@@ -64,29 +64,27 @@ package robots
 						block.setBroken();
 					}
 				}
-				if (Input.pressed ("ACTION") && vx == 0 && vy == 0 && !this.lead)
+				else if (Input.pressed ("ACTION") && !this.lead && !bInteractableInRange)
 				{
+					vx = 0;
+					vy = 0;
 					hammerTime();
 					bAction = true;
 				}
 				else
 				{
 					super.move(Robot.VELOCITY);
-					super.updateData();
 					hammerStrike.x = this.x;
 					hammerStrike.y = this.y;
-					FP.world.remove (hammerStrike);
 				}
+				super.updateData();
 				
-				this.pullLever();
-				this.takeKey();
-				this.unlockTouchingDoor();
 				if (vx == 0 && vy == 0 && bAction==false){
 					if (direction == 3) animation.play("STAND_UP");
 					else if (direction == 0) animation.play("STAND_RIGHT");
 					else if (direction == 1) animation.play("STAND_DOWN");
 					else if (direction == 2) animation.play("STAND_LEFT");
-				}else if(bAction==false  && bAction==false) {
+				}else if(bAction==false) {
 					if (direction == 3) animation.play("WALK_UP");
 					else if (direction == 0) animation.play("WALK_RIGHT");
 					else if (direction == 1) animation.play("WALK_DOWN");
