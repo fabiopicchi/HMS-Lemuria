@@ -2,4 +2,4 @@ bin/*
 obj/*
 .git/*
 SPJam2012.as3proj
-src/Game.as
+src\Game.as
