@@ -52,9 +52,9 @@ package
 		[Embed(source = '../maps/walls3.txt', mimeType = 'application/octet-stream')]public static const walls3:Class;
 		[Embed(source = '../maps/water3.txt', mimeType = 'application/octet-stream')]public static const water3:Class;
 		[Embed(source = '../maps/ground3.txt', mimeType = 'application/octet-stream')]public static const map3:Class;
-				
-		//public static const world1 : Array = [fase1_1_2, fase1_2_1, fase1_2_2, fase1_2_3, fase1_3_1, fase1_3_2, fase1_3_3, fase1_4_2];
 		
+		[Embed(source = '../maps/texts.xml', mimeType = 'application/octet-stream')]private static const texts:Class;
+		public static const xmlConversations : XML = new XML (texts);
 		
 		public function Assets() 
 		{

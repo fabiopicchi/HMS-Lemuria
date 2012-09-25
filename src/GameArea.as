@@ -26,6 +26,7 @@ package
 	import robots.Shield;
 	import traps.Gear;
 	import traps.Steam;
+	import UI.DialogBox;
 	
 	/**
 	 * ...
@@ -39,7 +40,7 @@ package
 		public static var waterMap : Grid;
 		public static var wallsMap : Grid;
 		private var room : Entity = new Entity (0, 0);
-		private var dialogBox : Entity = new Entity (180, 380);
+		private var dialogBox : DialogBox = new DialogBox ();
 		private var tmxMap : TmxLoader;
 		
 		static public var stage : Class;
@@ -122,11 +123,17 @@ package
 			
 			//loads and adds objects from tmx map
 			loadMap(tmxMap);
+			
+			add (dialogBox);
+			dialogBox.showConversation ([
+				{text : "asbfiuabfiasdbfadsbgoiabdgoiabgoiasbdfbsadfibasdifbaoisdbfiaosbdfiad", timeShowing : 1, charId : 1 },
+				{text : "asbfiuabfiasdbfadsbgoiabdgoiabgoiasbdfbsadfibasdifbaoisdbfiaosbdfiad", timeShowing : 1, charId : 2 },
+				{text : "asbfiuabfiasdbfadsbgoiabdgoiabgoiasbdfbsadfibasdifbaoisdbfiaosbdfiad", timeShowing : 1, charId : 3}]);
 		}
 		
 		override public function update():void 
 		{
-			if (Input.pressed("SWAP"))
+			if (Input.pressed("SWAP") && !leader.bAction)
 			{
 				swap();
 			}

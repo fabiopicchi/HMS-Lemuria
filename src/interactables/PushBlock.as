@@ -14,6 +14,7 @@ package interactables
 		
 		private var targetX : Number = 0;
 		private var targetY : Number = 0;
+		private var arCollideable : Array = ["breakBlock", "pushBlock"];
 		public var timerPushX : Number = 0;
 		public var timerPushY : Number = 0;
 		
@@ -37,28 +38,74 @@ package interactables
 			
 			if (dir == 0)
 			{
-				if (!collide("walls", x + way * 32, y) && !collide("breakBlock", x + way * 32, y) && !collide("pushBlock", x + way * 32, y))
-				{
-					ax = -way * 0.01;
-					vx = way * Math.sqrt (2 * Math.abs(ax) * 32);
-					targetX = blockX + way * 32;
-				}
-				else
-				{
-					bMoving = false;
-				}
+				ax = -way * 0.01;
+				vx = way * Math.sqrt (2 * Math.abs(ax) * 32);
+				targetX = blockX + way * 32;
 			}
 			else
 			{
-				if (!collide("walls", x, y + way * 32) && !collide("breakBlock", x, y + way * 32) && !collide("pushBlock", x, y + way * 32))
+				ay = -way * 0.01;
+				vy = way * Math.sqrt (2 * Math.abs(ay) * 32);
+				targetY = blockY + way * 32;
+			}
+			
+			
+			//Collision
+			var arEntities : Array = [];
+			
+			//add Entities to collision array
+			for each (var type : String in arCollideable)
+			{
+				FP.world.getType(type, arEntities);
+			}
+			
+			//add tilemap to collision array
+			var row : Number = Math.floor (x / 32);
+			var col : Number = Math.floor (y / 32);
+			var i : Number;
+			var j : Number;
+			var entity : CollidableEntity;
+			for (i = row - 1; i < row + 2; i++)
+			{
+				for (j = col - 1; j < col + 2; j++)
 				{
-					ay = -way * 0.01;
-					vy = way * Math.sqrt (2 * Math.abs(ay) * 32);
-					targetY = blockY + way * 32;
+					if (GameArea.wallsMap.getTile(i, j))
+					{
+						entity = new CollidableEntity ();
+						entity.x = i * 32;
+						entity.y = j * 32;
+						entity.width = 32;
+						entity.height = 32;
+						entity.type = "walls";
+						arEntities.push (entity);
+					}
+					else if (GameArea.waterMap.getTile(i, j))
+					{
+						entity = new CollidableEntity ();
+						entity.x = i * 32;
+						entity.y = j * 32;
+						entity.width = 32;
+						entity.height = 32;
+						entity.type = "water";
+						arEntities.push (entity);
+					}
 				}
-				else
+			}
+			
+			//process collisions
+			for each (entity in arEntities)
+			{
+				if (entity != this)
 				{
-					bMoving = false;
+					if (this.collideAABB(entity).willCollide)
+					{
+						vx = 0;
+						ax = 0;
+						vy = 0;
+						ay = 0;
+						bMoving = false;
+						return;
+					}
 				}
 			}
 		}
