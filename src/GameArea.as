@@ -64,7 +64,7 @@ package
 		public function GameArea(stage : Class, map : Class, water : Class, walls : Class, song : Class, arRobots : Array) 
 		{
 			music = new Sfx (song);
-			//music.loop();
+			music.loop();
 			
 			GameArea.arRobots = arRobots;
 			GameArea.stage = stage;

@@ -1,6 +1,7 @@
 package UI 
 {
 	import net.flashpunk.Entity;
+	import net.flashpunk.graphics.Image;
 	/**
 	 * ...
 	 * @author 
@@ -9,7 +10,7 @@ package UI
 	{
 		public function DialogBox() 
 		{
-			
+			graphic = Image.createRect (
 		}
 		
 		override public function update():void 

@@ -1,5 +1,6 @@
 package robots 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
@@ -82,26 +83,30 @@ package robots
 				}
 				super.updateData();
 				
-				if(vx==0 && vy==0 && bAction==false){
+				if (vx == 0 && vy == 0 && bAction == false)
+				{
 					if (direction == 3) animation.play("STAND_UP");
 					else if (direction == 0) animation.play("STAND_RIGHT");
 					else if (direction == 1) animation.play("STAND_DOWN");
 					else if (direction == 2) animation.play("STAND_LEFT");
-				}else if(bAction==false) {
+				}
+				else if (bAction == false) 
+				{
 					if (direction == 3) animation.play("WALK_UP");
 					else if (direction == 0) animation.play("WALK_RIGHT");
 					else if (direction == 1) animation.play("WALK_DOWN");
 					else if (direction == 2) animation.play("WALK_LEFT");
 				}
-				
-				var steam : SteamHitBox = collide ("steam", x, y) as SteamHitBox;
-				if (!this.lead && steam && steam.steamHandle.on)
-				{
-					FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
-				}
 			}
 		}
 		
+		override protected function handleWaterCollision(e:CollidableEntity):void 
+		{
+			if (!(bAction && !bArrived))
+			{
+				super.handleWaterCollision(e);
+			}
+		}
 	}
 
 }

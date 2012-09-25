@@ -90,12 +90,6 @@ package robots
 					else if (direction == 1) animation.play("WALK_DOWN");
 					else if (direction == 2) animation.play("WALK_LEFT");
 				}
-				var steam : SteamHitBox = collide ("steam", x, y) as SteamHitBox;
-				if (!this.lead && steam && steam.steamHandle.on)
-				{
-					FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
-				}
-				
 			}
 		}
 		

@@ -187,13 +187,24 @@ package robots
 				{
 					for (j = col - 1; j < col + 2; j++)
 					{
-						if (GameArea.wallsMap.getTile(i, j) || GameArea.waterMap.getTile(i, j))
+						if (GameArea.wallsMap.getTile(i, j))
 						{
 							entity = new CollidableEntity ();
 							entity.x = i * 32;
 							entity.y = j * 32;
 							entity.width = 32;
 							entity.height = 32;
+							entity.type = "walls";
+							arEntities.push (entity);
+						}
+						else if (GameArea.waterMap.getTile(i, j))
+						{
+							entity = new CollidableEntity ();
+							entity.x = i * 32;
+							entity.y = j * 32;
+							entity.width = 32;
+							entity.height = 32;
+							entity.type = "water";
 							arEntities.push (entity);
 						}
 					}
@@ -289,6 +300,9 @@ package robots
 				case "steam":
 					handleSteamCollision(e as SteamHitBox);
 					break;
+				case "water":
+					handleWaterCollision(e);
+					break;
 				default:
 					collideAABB(e);
 					break;
@@ -301,6 +315,11 @@ package robots
 			{
 				FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
 			}
+		}
+		
+		protected function handleWaterCollision (e : CollidableEntity) : void
+		{
+			collideAABB(e);
 		}
 		
 		public function cluster():void
