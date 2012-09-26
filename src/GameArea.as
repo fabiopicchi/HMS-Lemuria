@@ -77,6 +77,7 @@ package
 			GameArea.song = song;
 			
 			tmxMap = new TmxLoader (new stage ());
+			room = new Entity (0, 0);
 			
 			//ground, water and walls separated for layering purposes
 			

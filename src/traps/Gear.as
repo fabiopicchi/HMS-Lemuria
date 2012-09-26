@@ -25,6 +25,7 @@ package traps
 		public function Gear() 
 		{
 			animation.add("spin", [0, 1, 2, 3], 10, true);
+			setHitbox (32, 32);
 			this.type = "gear";
 			addGraphic(animation);
 		}

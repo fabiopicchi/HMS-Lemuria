@@ -315,7 +315,7 @@ package robots
 					{
 						FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
 					}
-					break
+					break;
 				default:
 					collideAABB(e);
 					break;

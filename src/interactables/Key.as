@@ -16,6 +16,7 @@ package interactables
 		{
 			graphic = new Spritemap (Assets.KEY, 32, 32);
 			this.type = "key";
+			setHitbox (32, 32);
 		}
 		
 		public function setup (obj : Object) : void
