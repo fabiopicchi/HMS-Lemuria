@@ -1,4 +1,36 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <data>
-
+	<conversation id = "1" hammer="1" hookshot="1" shield="1">
+		<text timeShowing="1" charId="1">
+			hpsdnhpsofdngsdfpgnspdfnfsnfbsnsdopfibnsdifnbpsodfnbosfdnbnkvcxnblxcnvbxvjnbpsnfbpsdfnjnaonoadfnjfnfjfdajnpsaodgnopasfdngblnxvcmbxcvmbx.,cvmnbxc,mvbsdfjgnposfn
+		</text>
+		<text timeShowing="1" charId="2">
+			hpsdnhpsofdngsdfpgnspdfnfsnfbsnsdopfibnsdifnbpsodfnbosfdnbnkvcxnblxcnvbxvjnbpsnfbpsdfnjnaonoadfnjfnfjfdajnpsaodgnopasfdngblnxvcmbxcvmbx.,cvmnbxc,mvbsdfjgnposfn
+		</text>
+		<text timeShowing="1" charId="3">
+			hpsdnhpsofdngsdfpgnspdfnfsnfbsnsdopfibnsdifnbpsodfnbosfdnbnkvcxnblxcnvbxvjnbpsnfbpsdfnjnaonoadfnjfnfjfdajnpsaodgnopasfdngblnxvcmbxcvmbx.,cvmnbxc,mvbsdfjgnposfn
+		</text>
+	</conversation>
+	<conversation id = "2" hammer="0" hookshot="1" shield="1">
+		<text timeShowing="1" charId="1">
+			How can the dead speak?
+		</text>
+		<text timeShowing="1" charId="2">
+			lol
+		</text>
+		<text timeShowing="1" charId="3">
+			is this nigga serious?
+		</text>
+	</conversation>
+	<conversation id = "3" hammer="1" hookshot="0" shield="1">
+		<text timeShowing="1" charId="1">
+			blablabla
+		</text>
+		<text timeShowing="1" charId="2">
+			UHEUHEUHEUHEUHEUHUHEHEUHE
+		</text>
+		<text timeShowing="1" charId="3">
+			morria
+		</text>
+	</conversation>
 </data>

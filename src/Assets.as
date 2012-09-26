@@ -27,6 +27,9 @@ package
 		[Embed(source = '../assets/tileset.png')] public static const TILESET:Class;
 		[Embed(source = '../assets/title.png')] public static const TITLE:Class;
 		[Embed(source = '../assets/touchingDoor.png')] public static const TOUNCHING_DOOR:Class;
+		[Embed(source = '../assets/port-hammer.png')] public static const PORT_HAMMER:Class;
+		[Embed(source = '../assets/port-shield.png')] public static const PORT_SHIELD:Class;
+		[Embed(source = '../assets/port-hookshot.png')] public static const PORT_HOOKSHOT:Class;
 		
 		[Embed(source = '../assets/ending.mp3')] public static const ENDING_SONG:Class;
 		[Embed(source = '../assets/hammer.mp3')] public static const HAMMER_SOUND:Class;
@@ -53,8 +56,8 @@ package
 		[Embed(source = '../maps/water3.txt', mimeType = 'application/octet-stream')]public static const water3:Class;
 		[Embed(source = '../maps/ground3.txt', mimeType = 'application/octet-stream')]public static const map3:Class;
 		
-		[Embed(source = '../maps/texts.xml', mimeType = 'application/octet-stream')]private static const texts:Class;
-		public static const xmlConversations : XML = new XML (texts);
+		[Embed(source = '../maps/texts.xml', mimeType = 'application/octet-stream')]private static const TEXTS:Class;
+		public static const XML_CONVERSATIONS : XML = new XML (new TEXTS());
 		
 		public function Assets() 
 		{

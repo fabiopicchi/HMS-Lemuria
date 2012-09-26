@@ -1,5 +1,6 @@
 package traps 
 {
+	import collision.CollidableEntity;
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.FP;
@@ -10,7 +11,7 @@ package traps
 	 * ...
 	 * @author Arthur Vieira
 	 */
-	public class Gear extends Entity 
+	public class Gear extends CollidableEntity 
 	{
 		
 		public var animation:Spritemap = new Spritemap(Assets.GEAR, 32, 32);

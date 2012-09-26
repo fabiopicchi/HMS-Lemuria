@@ -26,6 +26,7 @@ package
 	import robots.Shield;
 	import traps.Gear;
 	import traps.Steam;
+	import UI.ConversationTrigger;
 	import UI.DialogBox;
 	
 	/**
@@ -39,9 +40,9 @@ package
 		
 		public static var waterMap : Grid;
 		public static var wallsMap : Grid;
-		private var room : Entity = new Entity (0, 0);
-		private var dialogBox : DialogBox = new DialogBox ();
-		private var tmxMap : TmxLoader;
+		private static var room : Entity = new Entity (0, 0);
+		private static var dialogBox : DialogBox = new DialogBox ();
+		private static var tmxMap : TmxLoader;
 		
 		static public var stage : Class;
 		static public var map : Class;
@@ -60,7 +61,8 @@ package
 										{type : Gear, id : "gear", layer : OBJECT_LAYER },
 										{type : Steam, id : "steam", layer : OBJECT_LAYER },
 										{type : TouchingDoor, id : "door", layer : OBJECT_LAYER },
-										{type : Door, id : "finaldoor", layer : OBJECT_LAYER }];
+										{type : Door, id : "finaldoor", layer : OBJECT_LAYER },
+										{type : ConversationTrigger, id : "trigger", layer : OBJECT_LAYER }];
 		
 		public function GameArea(stage : Class, map : Class, water : Class, walls : Class, song : Class, arRobots : Array) 
 		{
@@ -125,10 +127,7 @@ package
 			loadMap(tmxMap);
 			
 			add (dialogBox);
-			dialogBox.showConversation ([
-				{text : "asbfiuabfiasdbfadsbgoiabdgoiabgoiasbdfbsadfibasdifbaoisdbfiaosbdfiad", timeShowing : 1, charId : 1 },
-				{text : "asbfiuabfiasdbfadsbgoiabdgoiabgoiasbdfbsadfibasdifbaoisdbfiaosbdfiad", timeShowing : 1, charId : 2 },
-				{text : "asbfiuabfiasdbfadsbgoiabdgoiabgoiasbdfbsadfibasdifbaoisdbfiaosbdfiad", timeShowing : 1, charId : 3}]);
+			dialogBox.visible = false;
 		}
 		
 		override public function update():void 
@@ -169,16 +168,6 @@ package
 		override public function render():void 
 		{
 			super.render();
-		}
-		
-		public function animateLeftBehind () : void
-		{
-			dialogBox.visible = true;
-			dialogBox.graphic.y = 0;
-			TweenMax.to (dialogBox.graphic, 5, { y : -50, alpha : 0, onComplete : function () : void { 
-					(dialogBox.graphic as Text).alpha = 1;
-					dialogBox.visible = false;
-			} } );
 		}
 		
 		public function swap() : void
@@ -277,6 +266,16 @@ package
 			}
 		}
 		
+		public static function isAlive (c : Class) : Boolean
+		{
+			for each (var r : Robot in _team)
+			{
+				if (r is c)
+					return true;
+			}
+			return false;
+		}
+		
 		public static function leaveFormation () : void
 		{
 			for each (var r : Robot in _team)
@@ -288,6 +287,17 @@ package
 		public static function abandonLeader () : void
 		{
 			_team.shift();
+		}
+		
+		public static function showDialog (t : ConversationTrigger) : void
+		{
+			if (!t.bTriggered && ((!t.bHammer && !isAlive(Hammer)) || (t.bHammer && isAlive(Hammer))) &&
+				((!t.bHookshot && !isAlive(Hookshot)) || (t.bHookshot && isAlive(Hookshot))) && 
+				((!t.bShield && !isAlive(Shield))|| (t.bShield && isAlive(Shield))))
+			{
+				dialogBox.showConversation (t.arConversation);
+				t.bTriggered = true;
+			}
 		}
 		
 		private function parseCollisionMap (tileMap : String, grid : Grid) : void

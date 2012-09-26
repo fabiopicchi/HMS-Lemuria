@@ -16,6 +16,7 @@ package robots
 	import net.flashpunk.masks.Grid;
 	import net.flashpunk.utils.Input;
 	import traps.SteamHitBox;
+	import UI.ConversationTrigger;
 	
 	/**
 	 * ...
@@ -32,7 +33,7 @@ package robots
 		public var hasTarget : Boolean = false;
 		protected var dead : Boolean = false;
 		protected var bInteractableInRange : Boolean = false;
-		private static const arCollideable : Array = ["pushBlock", "breakBlock", "touchingDoor", "door", "key", "lever", "steam"];
+		private static const arCollideable : Array = ["pushBlock", "breakBlock", "touchingDoor", "door", "key", "lever", "steam", "trigger", "gear"];
 		
 		public var direction : int;
 		
@@ -303,6 +304,18 @@ package robots
 				case "water":
 					handleWaterCollision(e);
 					break;
+				case "trigger":
+					if (this.collideWith (e, x, y))
+					{
+						GameArea.showDialog ((e as ConversationTrigger));
+					}
+					break;
+				case "gear":
+					if (this.collideWith (e, x, y))
+					{
+						FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
+					}
+					break
 				default:
 					collideAABB(e);
 					break;

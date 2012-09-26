@@ -32,7 +32,7 @@ package
 		
 		public function WriteToFile() 
 		{
-			tmxMap = new TmxLoader (new Assets.stage2 ());
+			tmxMap = new TmxLoader (new Assets.stage3 ());
 			this.addEventListener (Event.ENTER_FRAME, abra);
 			instance = this;
 		}
@@ -46,7 +46,7 @@ package
 		{
 			removeEventListener(Event.ENTER_FRAME, abra);
 			this.addEventListener (MapReadEvent.COMPLETE, salvaFase);
-			tmxMap.getCollisionMap("ground");
+			tmxMap.getCollisionMap("water");
 		}
 		
 		private function salvaFase(e:MapReadEvent):void 

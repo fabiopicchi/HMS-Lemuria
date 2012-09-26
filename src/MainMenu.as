@@ -36,8 +36,8 @@ package
 			if (!creditsScreen && cursor.play && cursor.select())
 			{
 				menuSong.stop();
-				FP.world = new GameArea (Assets.stage1, Assets.map1, Assets.water1, Assets.walls1, 
-										 Assets.MAIN_SONG, [Hammer, Hookshot, Shield]);
+				FP.world = new GameArea (Assets.stage2, Assets.map2, Assets.water2, Assets.walls2, 
+										 Assets.MAIN_SONG, [Hookshot, Shield]);
 			}
 			else if (!creditsScreen && !cursor.play && cursor.select())
 			{
