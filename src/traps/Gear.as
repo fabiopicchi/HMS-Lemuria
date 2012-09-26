@@ -13,7 +13,7 @@ package traps
 	public class Gear extends Entity 
 	{
 		
-		public var animation:Spritemap = new Spritemap(Assets.GEAR, 32, 32);
+		public var animation : Spritemap = new Spritemap(Assets.GEAR, 32, 32);
 		public var period : Number;
 		public var direction : int;
 		public var way : int;
@@ -23,7 +23,7 @@ package traps
 		
 		public function Gear() 
 		{
-			animation.add("spin", [0, 1, 2, 3]);
+			animation.add("spin", [0, 1, 2, 3], 10, true);
 			this.type = "gear";
 			addGraphic(animation);
 		}
@@ -42,9 +42,6 @@ package traps
 		
 		override public function update():void 
 		{
-			
-			var vx : Number;
-			var vy : Number;
 			var absSpeed : Number = _trackLength / (period / 2);
 			
 			if (direction == 0)
@@ -122,7 +119,6 @@ package traps
 		
 		override public function render():void 
 		{
-			
 			super.render();
 		}
 		
