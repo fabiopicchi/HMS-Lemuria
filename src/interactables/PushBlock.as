@@ -4,6 +4,7 @@ package interactables
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
+	import net.flashpunk.Sfx;
 	/**
 	 * ...
 	 * @author 
@@ -17,6 +18,7 @@ package interactables
 		private var arCollideable : Array = ["breakBlock", "pushBlock"];
 		public var timerPushX : Number = 0;
 		public var timerPushY : Number = 0;
+		private var actionSound : Sfx = new Sfx (Assets.MOVABLE_BLOCK_SOUND);
 		
 		public function PushBlock() 
 		{
@@ -38,13 +40,13 @@ package interactables
 			
 			if (dir == 0)
 			{
-				ax = -way * 0.01;
+				ax = -way * 100;
 				vx = way * Math.sqrt (2 * Math.abs(ax) * 32);
 				targetX = blockX + way * 32;
 			}
 			else
 			{
-				ay = -way * 0.01;
+				ay = -way * 100;
 				vy = way * Math.sqrt (2 * Math.abs(ay) * 32);
 				targetY = blockY + way * 32;
 			}
@@ -60,8 +62,8 @@ package interactables
 			}
 			
 			//add tilemap to collision array
-			var row : Number = Math.floor (x / 32);
-			var col : Number = Math.floor (y / 32);
+			var row : Number = Math.round (x / 32);
+			var col : Number = Math.round (y / 32);
 			var i : Number;
 			var j : Number;
 			var entity : CollidableEntity;
@@ -69,25 +71,18 @@ package interactables
 			{
 				for (j = col - 1; j < col + 2; j++)
 				{
-					if (GameArea.wallsMap.getTile(i, j))
+					if (i == row || j == col)
 					{
-						entity = new CollidableEntity ();
-						entity.x = i * 32;
-						entity.y = j * 32;
-						entity.width = 32;
-						entity.height = 32;
-						entity.type = "walls";
-						arEntities.push (entity);
-					}
-					else if (GameArea.waterMap.getTile(i, j))
-					{
-						entity = new CollidableEntity ();
-						entity.x = i * 32;
-						entity.y = j * 32;
-						entity.width = 32;
-						entity.height = 32;
-						entity.type = "water";
-						arEntities.push (entity);
+						if (GameArea.wallsMap.getTile(i, j))
+						{
+							entity = new CollidableEntity ();
+							entity.x = i * 32;
+							entity.y = j * 32;
+							entity.width = 32;
+							entity.height = 32;
+							entity.type = "walls";
+							arEntities.push (entity);
+						}
 					}
 				}
 			}
@@ -108,6 +103,7 @@ package interactables
 					}
 				}
 			}
+			actionSound.play(0.3);
 		}
 		
 		override public function added():void 
@@ -120,25 +116,25 @@ package interactables
 			super.update();
 			if (bMoving)
 			{
-				x += vx;
-				y += vy;
+				x += vx * FP.elapsed;
+				y += vy * FP.elapsed;
 				
-				if (Math.abs (vx) - Math.abs (ax) < 0)
+				if (Math.abs (vx) - Math.abs (ax) * FP.elapsed < 0)
 				{
 					vx = 0;
 					ax = 0;
 					bMoving = false;
 					x = targetX;
 				}
-				vx += ax;
-				if (Math.abs (vy) - Math.abs (ay) < 0)
+				vx += ax * FP.elapsed;
+				if (Math.abs (vy) - Math.abs (ay) * FP.elapsed < 0)
 				{
 					vy = 0;
 					ay = 0;
 					bMoving = false;
 					y = targetY;
 				}
-				vy += ay;
+				vy += ay * FP.elapsed;
 			}
 		}
 		

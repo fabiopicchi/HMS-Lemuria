@@ -15,7 +15,7 @@ package UI
 		private static const shieldImage : Image = new Image (Assets.PORT_SHIELD);
 		private static const hookShotImage : Image = new Image (Assets.PORT_HOOKSHOT);
 		private var avatar : Image;
-		private var textBox : Text = new Text ("", 86, 8, {size: 14});
+		private var textBox : Text = new Text ("", 86, 8);
 		
 		private var textToShow : Array = [];
 		private var textIndex : int = 0;

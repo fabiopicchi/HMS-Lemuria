@@ -18,6 +18,7 @@ package interactables
 			animation.add("ON", [0]);
 			animation.add("OFF", [1]);
 			animation.play ("ON");
+			this.graphic = animation;
 			this.name = "finalDoor";
 		}
 		

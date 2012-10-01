@@ -25,9 +25,11 @@ package traps
 		public function Gear() 
 		{
 			animation.add("spin", [0, 1, 2, 3], 10, true);
-			setHitbox (32, 32);
+			setHitbox (26, 26);
 			this.type = "gear";
 			addGraphic(animation);
+			graphic.x -= 3;
+			graphic.y -= 3;
 		}
 		
 		public function setup (obj : Object) : void

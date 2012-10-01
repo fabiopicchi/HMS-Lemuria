@@ -8,6 +8,7 @@ package traps
 	import net.flashpunk.graphics.Emitter;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
+	import net.flashpunk.Sfx;
 	import net.flashpunk.utils.Ease;
 	/**
 	 * ...
@@ -26,6 +27,7 @@ package traps
 		public var emitX : int = 0;
 		public var emitY : int = 0;
 		public var on : Boolean = false;
+		private var actionSound : Sfx = new Sfx (Assets.STEAM_SOUND);
 		
 		private var e: SteamHitBox;
 		
@@ -73,8 +75,8 @@ package traps
 				emitX = 16;
 				emitY = 32;
 				
-				e.setHitbox(32, obj.size * 32);
-				e.x = this.x;
+				e.setHitbox(26, obj.size * 32);
+				e.x = this.x + 3;
 				e.y = this.y - obj.size * 32 + 32;
 			}
 			else if (obj.direction == 1)
@@ -90,13 +92,16 @@ package traps
 				emitX = 0;
 				emitY = 16;
 				
-				e.setHitbox(obj.size * 32, 32);
+				e.setHitbox(obj.size * 32, 26);
 				e.x = this.x;
-				e.y = this.y;
+				e.y = this.y + 3;
 			}
 			else if (obj.direction == 2)
 			{
 				animation.play("down");
+				
+				_streamLength -= 16;
+				maxLength -= 16;
 				
 				emitter.setMotion ("steam", 267, _streamLength, 0, 6, 0, 2, Ease.backOut);
 				emitter.setAlpha("steam", 1, 0);
@@ -107,8 +112,8 @@ package traps
 				emitX = 16;
 				emitY = 16;
 				
-				e.setHitbox(32, obj.size * 32);
-				e.x = this.x;
+				e.setHitbox(26, obj.size * 32);
+				e.x = this.x - 3;
 				e.y = this.y + 16;
 			}
 			else if (obj.direction == 3)
@@ -124,9 +129,9 @@ package traps
 				emitX = 32;
 				emitY = 16;
 				
-				e.setHitbox(obj.size * 32, 32);
+				e.setHitbox(obj.size * 32, 26);
 				e.x = this.x - obj.size * 32 + 32;
-				e.y = this.y;
+				e.y = this.y - 3;
 			}
 			TweenLite.delayedCall (1, function () : void { FP.world.add (e); e.visible = false; } );
 		}
@@ -167,43 +172,43 @@ package traps
 					this.x + this.width > FP.world.camera.x &&
 					this.y < FP.world.camera.y + 480 &&
 					this.y + this.height > FP.world.camera.y)
+			{
+				if (period != 0)
+				{
+					if (timer <= period / 4)
 					{
-						if (period != 0)
+						on = false;
+					}
+					else if (timer <= period / 2)
+					{
+						emitter.emit("leak", this.x + emitX - 7, this.y + emitY - 7);
+					}
+					else if (timer <= period)
+					{
+						for (i = 0; i < 5; i++)
 						{
-							if (timer <= period / 4)
-							{
-								on = false;
-							}
-							else if (timer <= period / 2)
-							{
-								emitter.emit("leak", this.x + emitX - 7, this.y + emitY - 7);
-							}
-							else if (timer <= period)
-							{
-								for (i = 0; i < 5; i++)
-								{
-									emitter.emit("steam", this.x + emitX - 7, this.y + emitY - 7);
-								}
-								if (timer >= 0.55 * period)
-								{
-									on = true;
-								}
-							}
-							else
-							{
-								timer = 0;
-								on = false;
-							}
+							emitter.emit("steam", this.x + emitX - 7, this.y + emitY - 7);
 						}
-						else
+						if (timer >= 0.55 * period)
 						{
 							on = true;
-							for (i = 0; i < 5; i++)
-							{
-								emitter.emit("steam", this.x + emitX - 7, this.y + emitY - 7);
-							}
 						}
 					}
+					else
+					{
+						timer = 0;
+						on = false;
+					}
+				}
+				else
+				{
+					on = true;
+					for (i = 0; i < 5; i++)
+					{
+						emitter.emit("steam", this.x + emitX - 7, this.y + emitY - 7);
+					}
+				}
+			}
 			super.update();
 		}
 		

@@ -24,16 +24,29 @@ package robots
 	 */
 	public class Robot extends CollidableEntity 
 	{		
-		static protected const VELOCITY:Number = 5;
-		static protected const DIAG_VELOCITY:Number = 12.5;
+		static public const VELOCITY:Number = 160;
 		static public const NEAR_RADIUS : int = 30;
+		
+		static public const MOVING : int = 1;
+		static public const ACTION : int = 2;
+		static public const FORMATION : int = 4;
+		static public const LEFT_BEHIND : int = 8;
+		static public const DEAD : int = 16;
+		
+		static public const LINE : int = 1;
+		static public const CLUSTER : int = 2;
+		
+		public var targetX : Number;
+		public var targetY : Number;
+		
 		static public var keyCount : int;
-		public var bAction : Boolean = false;
-		public var blockHandle : PushBlock;
-		public var hasTarget : Boolean = false;
-		protected var dead : Boolean = false;
+		public var sacrificeText : Array = [];
+		
+		protected var _state : int = 0;
+		protected var _nextState : int = -1;
+		
 		protected var bInteractableInRange : Boolean = false;
-		private static const arCollideable : Array = ["pushBlock", "breakBlock", "touchingDoor", "door", "key", "lever", "steam", "trigger", "gear"];
+		private static const arCollideable : Array = ["pushBlock", "breakBlock", "touchingDoor", "door", "key", "lever", "steam", "trigger", "gear", "endingTrigger"];
 		
 		public var direction : int;
 		
@@ -41,6 +54,12 @@ package robots
 		{
 			this.direction = direction;
 			this.type = "robot";
+			_state = MOVING;
+		}
+		
+		public function switchState (nextState : int) : void
+		{
+			_nextState = nextState;
 		}
 		
 		override public function added():void 
@@ -50,9 +69,106 @@ package robots
 		
 		override public function update():void 
 		{
+			if (_nextState != -1)
+			{
+				if ((_nextState & MOVING) == MOVING)
+				{
+					onMove();
+				}
+				else if ((_nextState & ACTION) == ACTION)
+				{
+					onAction();
+				}
+				else if ((_nextState & FORMATION) == FORMATION)
+				{
+					onFormation();
+				}
+				else if ((_nextState & LEFT_BEHIND) == LEFT_BEHIND)
+				{
+					onLeftBehind();
+				}
+				else if ((_nextState & DEAD) == DEAD)
+				{
+					onDead();
+				}
+				_state = _nextState;
+				_nextState = -1;
+			}
+			
+			if ((_state & MOVING) == MOVING)
+			{
+				moveUpdate();
+			}
+			else if ((_state & ACTION) == ACTION)
+			{
+				actionUpdate ();
+			}
+			else if ((_state & FORMATION) == FORMATION)
+			{
+				formationUpdate ();
+			}
+			else if ((_state & LEFT_BEHIND) == LEFT_BEHIND)
+			{
+				leftBehindUpdate ();
+			}
+			else if ((_state & DEAD) == DEAD)
+			{
+				deadUpdate ();
+			}
+		}
+		
+		protected function onDead():void 
+		{
+			vx = 0;
+			vy = 0;
+		}
+		
+		protected function onLeftBehind():void 
+		{
+			GameArea.abandonLeader ();
+			GameArea.showDialog(sacrificeText);
+		}
+		
+		protected function onFormation():void 
+		{
+			
+		}
+		
+		protected function onAction():void 
+		{
+			
+		}
+		
+		protected function onMove():void 
+		{
+			
+		}
+		
+		protected function moveUpdate():void 
+		{
 			this.move (VELOCITY);
 			this.updateData();
-			super.update();
+			super.update();			
+		}
+		
+		protected function deadUpdate():void 
+		{
+			
+		}
+		
+		protected function leftBehindUpdate():void 
+		{
+			
+		}
+		
+		protected function formationUpdate():void 
+		{
+			moveTowards(targetX, targetY, VELOCITY * 3);
+		}
+		
+		protected function actionUpdate():void 
+		{
+			
 		}
 		
 		public function move(speed : Number):void
@@ -92,7 +208,7 @@ package robots
 			}
 			
 			
-			else if (lead != null && !hasTarget)
+			else if (lead != null)
 			{
 				if (this.distanceFrom(lead) <= NEAR_RADIUS)
 				{
@@ -103,21 +219,20 @@ package robots
 				{
 					var distX : Number;
 					var distY : Number;
-					
-					if (lead.vx != 0 && lead.vy == 0 && this.y != lead.y)
+					if (lead.vx != 0 && lead.vy == 0 && (Math.abs (this.y - lead.y) > + speed * FP.elapsed / 2))
 					{
 						distY = this.lead.y - this.y;
-						this.vy = (Math.abs(distY) < speed ? distY : speed * Math.abs(distY) / distY);
+						this.vy = speed * FP.sign(distY);
 					}
-					else if (lead.vx == 0 && lead.vy != 0 && this.x != lead.x)
+					else if (lead.vx == 0 && lead.vy != 0 && (Math.abs (this.x - lead.x) > + speed * FP.elapsed / 2))
 					{
 						distX = this.lead.x - this.x;
-						this.vx = (Math.abs(distX) < speed ? distX : speed * Math.abs(distX) / distX);
+						this.vx = speed * FP.sign(distX);
 					}
 					else
 					{
-						this.vx = (lead.x - this.x) / 10;
-						this.vy = (lead.y - this.y) / 10;
+						this.vx = (lead.x - this.x) * 3;
+						this.vy = (lead.y - this.y) * 3;
 					}
 				}
 			}
@@ -165,62 +280,59 @@ package robots
 				direction = 0;
 			}
 			
-			if (!this.hasTarget)
+			var arEntities : Array = [];
+			var result : CollisionResult;
+			var entity : CollidableEntity;
+			
+			bInteractableInRange = false;
+			
+			//add tilemap to collision array
+			var row : Number = Math.floor(centerX / 32);
+			var col : Number = Math.floor(centerY / 32);
+			var i : Number;
+			var j : Number;
+			for (i = row - 1; i < row + 2; i++)
 			{
-				var arEntities : Array = [];
-				var result : CollisionResult;
-				var entity : CollidableEntity;
-				
-				bInteractableInRange = false;
-				
-				//add Entities to collision array
-				for each (var type : String in arCollideable)
+				for (j = col - 1; j < col + 2; j++)
 				{
-					FP.world.getType(type, arEntities);
-				}
-				
-				//add tilemap to collision array
-				var row : Number = Math.floor (x / 32);
-				var col : Number = Math.floor (y / 32);
-				var i : Number;
-				var j : Number;
-				for (i = row - 1; i < row + 2; i++)
-				{
-					for (j = col - 1; j < col + 2; j++)
+					if (GameArea.wallsMap.getTile(i, j))
 					{
-						if (GameArea.wallsMap.getTile(i, j))
-						{
-							entity = new CollidableEntity ();
-							entity.x = i * 32;
-							entity.y = j * 32;
-							entity.width = 32;
-							entity.height = 32;
-							entity.type = "walls";
-							arEntities.push (entity);
-						}
-						else if (GameArea.waterMap.getTile(i, j))
-						{
-							entity = new CollidableEntity ();
-							entity.x = i * 32;
-							entity.y = j * 32;
-							entity.width = 32;
-							entity.height = 32;
-							entity.type = "water";
-							arEntities.push (entity);
-						}
+						entity = new CollidableEntity ();
+						entity.x = i * 32;
+						entity.y = j * 32;
+						entity.width = 32;
+						entity.height = 32;
+						entity.type = "walls";
+						arEntities.push (entity);
+					}
+					else if (GameArea.waterMap.getTile(i, j))
+					{
+						entity = new CollidableEntity ();
+						entity.x = i * 32;
+						entity.y = j * 32;
+						entity.width = 32;
+						entity.height = 32;
+						entity.type = "water";
+						arEntities.push (entity);
 					}
 				}
-				
-				//process collisions
-				for each (entity in arEntities)
-				{
-					reactCollisionEntities(entity);
-				}
-				
-				
-				this.x += this.vx;
-				this.y += this.vy;
 			}
+			
+			//add Entities to collision array
+			for each (var type : String in arCollideable)
+			{
+				FP.world.getType(type, arEntities);
+			}
+			
+			//process collisions
+			for each (entity in arEntities)
+			{
+				reactCollisionEntities(entity);
+			}
+			
+			
+			this.x += this.vx * FP.elapsed;
+			this.y += this.vy * FP.elapsed;
 		}
 		
 		protected function reactCollisionEntities(e : CollidableEntity) : void
@@ -293,8 +405,7 @@ package robots
 							var door : Door = FP.world.getInstance("finalDoor");
 							(e as Lever).pull();
 							door.open();
-							this.dead = true;
-							GameArea.abandonLeader ();
+							switchState (LEFT_BEHIND);
 						}
 					}
 					break;
@@ -307,13 +418,19 @@ package robots
 				case "trigger":
 					if (this.collideWith (e, x, y))
 					{
-						GameArea.showDialog ((e as ConversationTrigger));
+						GameArea.showTriggeredDialog ((e as ConversationTrigger));
 					}
 					break;
 				case "gear":
 					if (this.collideWith (e, x, y))
 					{
-						FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
+						switchState(DEAD);
+					}
+					break;
+				case "endingTrigger":
+					if (this.collideWith (e, x, y))
+					{
+						GameArea.showEnding();
 					}
 					break;
 				default:
@@ -326,141 +443,22 @@ package robots
 		{
 			if (this.collideWith (e, x, y) && (e as SteamHitBox).steamHandle.on)
 			{
-				FP.world = new GameArea (GameArea.stage, GameArea.map, GameArea.water, GameArea.walls, GameArea.song, GameArea.arRobots);
+				switchState (DEAD);
 			}
 		}
 		
 		protected function handleWaterCollision (e : CollidableEntity) : void
 		{
-			collideAABB(e);
-		}
-		
-		public function cluster():void
-		{
-			var clusterSpeed : Number = VELOCITY * 3;
-			
-			var second : Robot;
-			var third : Robot;
-			var teamSize : int = 1;
-			
-			if (this.follower)
+			var result : CollisionResult = collideAABB(e, false);
+			if (e.collidePoint(e.x, e.y, this.centerX, this.centerY))
 			{
-				teamSize++;
-				second = this.follower;
-				if (second.follower)
-				{
-					teamSize++;
-					third = second.follower;
-				}
+				switchState(DEAD);
 			}
-			
-			if (teamSize == 3)
+			else if (result.willCollide)
 			{
-				second.vx = 0;
-				second.vy = 0;
-				
-				third.vx = 0;
-				third.vy = 0;
-				if (this.direction == 0)
-				{
-					second.moveTowards(this.x - this.halfWidth, this.y - this.halfHeight, clusterSpeed);
-					third.moveTowards(this.x - this.halfWidth, this.y + this.halfHeight, clusterSpeed);
-				}
-				else if (this.direction == 1)
-				{
-					second.moveTowards(this.x + this.halfWidth, this.y - this.halfHeight, clusterSpeed);
-					third.moveTowards(this.x - this.halfWidth, this.y - this.halfHeight, clusterSpeed);
-				}
-				else if (this.direction == 2)
-				{
-					second.moveTowards(this.x + this.halfWidth, this.y + this.halfHeight, clusterSpeed);
-					third.moveTowards(this.x + this.halfWidth, this.y - this.halfHeight, clusterSpeed);
-				}
-				else
-				{
-					second.moveTowards(this.x - this.halfWidth, this.y + this.halfHeight, clusterSpeed);
-					third.moveTowards(this.x + this.halfWidth, this.y + this.halfHeight, clusterSpeed);
-				}
+				this.vx -= result.minTranslationVector.x / FP.elapsed;
+				this.vy -= result.minTranslationVector.y / FP.elapsed;
 			}
-			else if (teamSize == 2)
-			{
-				second.vx = 0;
-				second.vy = 0;
-				
-				if (this.direction == 0)
-				{
-					second.moveTowards(this.x - this.halfWidth, this.y, clusterSpeed);
-				}
-				else if (this.direction == 1)
-				{
-					second.moveTowards(this.x, this.y - this.halfHeight, clusterSpeed);
-				}
-				else if (this.direction == 2)
-				{
-					second.moveTowards(this.x + this.halfWidth, this.y, clusterSpeed);
-				}
-				else
-				{
-					second.moveTowards(this.x, this.y + this.halfHeight, clusterSpeed);
-				}
-			}
-		}
-		
-		public function line():void
-		{
-			var lineSpeed : Number = VELOCITY * 3;
-			
-			var second : Robot;
-			var third : Robot;
-			var teamSize : int = 1;
-			
-			var moveX : int;
-			var moveY : int;
-			var moveLength : Number = this.width / 2;
-			
-			if (this.direction == 0)
-			{
-				moveX = 1;
-				moveY = 0;
-			}
-			else if (this.direction == 1)
-			{
-				moveX = 0;
-				moveY = 1;
-			}
-			else if (this.direction == 2)
-			{
-				moveX = -1;
-				moveY = 0;
-			}
-			else
-			{
-				moveX = 0;
-				moveY = -1;
-			}
-			
-			if (this.follower)
-			{
-				second = this.follower;
-				second.moveTowards(this.x - moveX * moveLength, this.y - moveY * moveLength, lineSpeed);
-				if (second.follower)
-				{
-					third = second.follower;
-					third.moveTowards(this.x - moveX * moveLength * 2, this.y - moveY * moveLength * 2, lineSpeed);
-				}
-			}
-		}
-		
-		override public function render():void 
-		{
-			super.render();
-		}
-		
-		override public function moveTowards(x:Number, y:Number, amount:Number, solidType:Object = null, sweep:Boolean = false):void 
-		{
-			this.hasTarget = true;
-			
-			super.moveTowards(x, y, amount, solidType, sweep);
 		}
 		
 		public function get follower () : Robot
@@ -471,6 +469,11 @@ package robots
 		public function get lead () : Robot
 		{
 			return GameArea.getMyLeader(this);
+		}
+		
+		public function get state():int 
+		{
+			return _state;
 		}
 	}
 

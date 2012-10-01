@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="20" height="90" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32">
-  <image source="tileset.png" width="320" height="384"/>
+  <image source="tileset.png" width="320" height="352"/>
  </tileset>
  <layer name="ground" width="20" height="90">
   <data>
@@ -3715,7 +3715,7 @@
    <tile gid="54"/>
    <tile gid="55"/>
    <tile gid="55"/>
-   <tile gid="56"/>
+   <tile gid="82"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -3732,7 +3732,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="54"/>
+   <tile gid="92"/>
    <tile gid="55"/>
    <tile gid="55"/>
    <tile gid="56"/>
@@ -3815,7 +3815,7 @@
    <tile gid="54"/>
    <tile gid="55"/>
    <tile gid="55"/>
-   <tile gid="56"/>
+   <tile gid="82"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -3832,7 +3832,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="54"/>
+   <tile gid="92"/>
    <tile gid="55"/>
    <tile gid="55"/>
    <tile gid="56"/>
@@ -3912,7 +3912,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="54"/>
+   <tile gid="92"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -4013,7 +4013,7 @@
    <tile gid="73"/>
    <tile gid="54"/>
    <tile gid="55"/>
-   <tile gid="56"/>
+   <tile gid="82"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -4073,7 +4073,7 @@
    <tile gid="55"/>
    <tile gid="55"/>
    <tile gid="55"/>
-   <tile gid="56"/>
+   <tile gid="82"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -4132,7 +4132,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="54"/>
+   <tile gid="92"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -4212,7 +4212,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="54"/>
+   <tile gid="92"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -4872,7 +4872,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="54"/>
+   <tile gid="92"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -5253,7 +5253,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="56"/>
+   <tile gid="82"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -5333,7 +5333,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="56"/>
+   <tile gid="82"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -5397,21 +5397,21 @@
    <tile gid="45"/>
    <tile gid="45"/>
    <tile gid="45"/>
-   <tile gid="45"/>
+   <tile gid="91"/>
    <tile gid="45"/>
    <tile gid="45"/>
    <tile gid="46"/>
-   <tile gid="92"/>
-   <tile gid="92"/>
-   <tile gid="92"/>
-   <tile gid="92"/>
+   <tile gid="83"/>
+   <tile gid="83"/>
+   <tile gid="83"/>
+   <tile gid="83"/>
    <tile gid="44"/>
    <tile gid="45"/>
    <tile gid="45"/>
+   <tile gid="91"/>
    <tile gid="45"/>
    <tile gid="45"/>
-   <tile gid="45"/>
-   <tile gid="45"/>
+   <tile gid="91"/>
    <tile gid="45"/>
   </data>
  </layer>
@@ -5560,5 +5560,115 @@
   <object name="spawn" type="spawn" x="256" y="2784" width="32" height="32"/>
   <object name="movable_block" type="movable_block" x="480" y="640" width="32" height="32"/>
   <object name="movable_block" type="movable_block" x="448" y="640" width="32" height="32"/>
+  <object name="leak" type="leak" x="0" y="2720" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="224" y="2176" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="64" y="1472" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="64" y="1408" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="480" y="1152" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="0" y="768" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="64" y="448" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="608" y="960" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="leak" type="leak" x="416" y="1184" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="224" y="2464" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="224" y="2400" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="608" y="2240" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="608" y="2208" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="608" y="384" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="608" y="256" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="64" y="288" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="64" y="128" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="64" y="1344" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="224" y="2080" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="224" y="2432" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="224" y="2848" width="32" height="32">
+   <properties>
+    <property name="direction" value="1"/>
+   </properties>
+  </object>
+  <object name="siren" type="siren" x="384" y="2848" width="32" height="32">
+   <properties>
+    <property name="direction" value="3"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

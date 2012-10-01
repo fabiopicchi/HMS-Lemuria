@@ -13,7 +13,7 @@ package robots
 	 */
 	public class Hook extends CollidableEntity 
 	{
-		private var hookSpeed : Number = 10;
+		private var hookSpeed : Number = 500;
 		public var originalX : Number;
 		public var originalY : Number;
 		public var direction : int;
@@ -30,9 +30,9 @@ package robots
 			this.hookshot = hookshot;
 			way = 1;
 			graphic = animation;
-			setHitbox(26, 26);
-			graphic.x = -3;
-			graphic.y = -3;
+			setHitbox(20, 20);
+			graphic.x = -6;
+			graphic.y = -6;
 			animation.add("STAND_DOWN", [0]);
 			animation.add("STAND_RIGHT", [1]);
 			animation.add("STAND_UP", [2]);
@@ -41,26 +41,26 @@ package robots
 		
 		public function shoot():Boolean
 		{
-			if (!collidedWall && !collidedBox)
+			var arEntities : Array = [];
+			var result : CollisionResult;
+			var entity : CollidableEntity;
+			
+			//add Entities to collision array
+			for each (var type : String in arCollideable)
 			{
-				var arEntities : Array = [];
-				var result : CollisionResult;
-				var entity : CollidableEntity;
-				
-				//add Entities to collision array
-				for each (var type : String in arCollideable)
+				FP.world.getType(type, arEntities);
+			}
+			
+			//add tilemap to collision array
+			var row : Number = Math.round (x / 32);
+			var col : Number = Math.round (y / 32);
+			var i : Number;
+			var j : Number;
+			for (i = row - 1; i < row + 2; i++)
+			{
+				for (j = col - 1; j < col + 2; j++)
 				{
-					FP.world.getType(type, arEntities);
-				}
-				
-				//add tilemap to collision array
-				var row : Number = Math.floor (x / 32);
-				var col : Number = Math.floor (y / 32);
-				var i : Number;
-				var j : Number;
-				for (i = row - 1; i < row + 2; i++)
-				{
-					for (j = col - 1; j < col + 2; j++)
+					if (i == row || j == col)
 					{
 						if (GameArea.wallsMap.getTile(i, j))
 						{
@@ -69,25 +69,27 @@ package robots
 							entity.y = j * 32;
 							entity.width = 32;
 							entity.height = 32;
+							entity.type = "walls";
 							arEntities.push (entity);
 						}
 					}
 				}
-				
-				for each (entity in arEntities)
-				{
-					reactCollisionEntities(entity);
-				}
-				
-				if (this.x <= FP.world.camera.x || this.x >= FP.world.camera.x + 640 ||
-					this.y <= FP.world.camera.y || this.y >= FP.world.camera.y + 480)
-				{
-					collidedWall = true;
-				}
-				else
-				{
-					launch(this);
-				}
+			}
+			
+			for each (entity in arEntities)
+			{
+				reactCollisionEntities(entity);
+			}
+			
+			if (this.x <= FP.world.camera.x || this.x >= FP.world.camera.x + 640 ||
+				this.y <= FP.world.camera.y || this.y >= FP.world.camera.y + 480)
+			{
+				collidedWall = true;
+			}
+			
+			if (!collidedWall && !collidedBox)
+			{
+				launch(this);
 			}
 			else if (collidedWall)
 			{
@@ -113,12 +115,14 @@ package robots
 				case "pushBlock":
 					if (collideAABB(e).willCollide)
 					{
+						GameArea.enterFormation();
 						collidedBox = true;
 					}
 					break;
 				case "breakBlock":
 					if (collideAABB(e).willCollide)
 					{
+						GameArea.enterFormation();
 						collidedBox = true;
 					}
 					break;
@@ -135,28 +139,28 @@ package robots
 		{
 			if (direction == 0)
 			{
-				e.x += way * hookSpeed;
-				vx = hookSpeed;
+				vx = way * hookSpeed;
 				vy = 0;
+				
 			}
 			else if (direction == 1)
 			{
-				e.y += way * hookSpeed;
 				vx = 0;
-				vy = hookSpeed;
+				vy = way * hookSpeed;
 			}
 			else if (direction == 2)
 			{
-				e.x -= way * hookSpeed;
-				vx = - hookSpeed;
+				vx = - way * hookSpeed;
 				vy = 0;
 			}
 			else
 			{
-				e.y -= way * hookSpeed;
 				vx = 0;
-				vy = - hookSpeed;
+				vy = - way * hookSpeed;
 			}
+			
+			e.x += vx * FP.elapsed;
+			e.y += vy * FP.elapsed;
 			
 			if (hookshot.direction == 3) animation.play("STAND_UP");
 			else if (hookshot.direction == 0) animation.play("STAND_RIGHT");
@@ -168,10 +172,7 @@ package robots
 		{
 			way = -1;
 			launch(this);
-			if ((direction == 0 && x <= originalX) ||
-				(direction == 1 && y <= originalY) ||
-				(direction == 2 && x >= originalX) ||
-				(direction == 3 && y >= originalY))
+			if (collideWith (hookshot, x, y))
 			{
 				FP.world.remove(this);
 				way = 1;
@@ -183,29 +184,15 @@ package robots
 		
 		public function latch():Boolean
 		{
-			hookshot.line();
+			GameArea.line();
 			launch(hookshot);
-			if (hookshot.collide("breakBlock", hookshot.x, hookshot.y) ||
-				hookshot.collide("pushBlock", hookshot.x, hookshot.y))
+			if (hookshot.collide ("pushBlock", hookshot.x, hookshot.y) || 
+				hookshot.collide ("breakBlock", hookshot.x, hookshot.y))
 			{
-				if (vx > 0)
-				{
-					hookshot.x = Math.ceil(hookshot.x / 32) * 32 - hookshot.width;
-				}
-				else if (vx < 0)
-				{
-					hookshot.x = Math.ceil(hookshot.x / 32) * 32;
-				}
-				if (vy > 0)
-				{
-					hookshot.y = Math.ceil(hookshot.y / 32) * 32 - hookshot.height;
-				}
-				else if (vy < 0)
-				{
-					hookshot.y = Math.ceil(hookshot.y / 32) * 32;
-				}
+				hookshot.vx = 0;
+				hookshot.vy = 0;
 				FP.world.remove(this);
-				hookshot.bArrived = true;
+				GameArea.leaveFormation();
 				collidedWall = false;
 				collidedBox = false;
 				return true;

@@ -20,7 +20,7 @@ package collision
 			
 		}
 		
-		public function collideAABB (c : CollidableEntity) : CollisionResult
+		public function collideAABB (c : CollidableEntity, bSolve : Boolean = true) : CollisionResult
 		{
 			//Polygon vertices
 			var arVerticesMe : Array = getAABBVertices();
@@ -32,9 +32,8 @@ package collision
 			//Result of the collision
 			var result : CollisionResult = new CollisionResult ();
 			
-			//AABB specific case
-			var nSidesMe : int = 4;
-			var nSidesC : int = 4;
+			var nSidesMe : int = arSidesMe.length;
+			var nSidesC : int = arSidesC.length;
 			
 			//Varibles used in the collision algorithm
 			var intervalIntersection : Number;
@@ -44,7 +43,7 @@ package collision
 			var side : Vec2;
 			var axis : Vec2;
 			var d : Vec2;
-			var velocity : Vec2 = new Vec2 (vx, vy);
+			var velocity : Vec2 = new Vec2 (vx * FP.elapsed, vy * FP.elapsed);
 			
 			var sideIndex : int = 0;
 			
@@ -118,8 +117,11 @@ package collision
 			{
 				result.minTranslationVector = new Vec2 (translationAxis.x * minIntervalIntersection, translationAxis.y * minIntervalIntersection);
 				//apply collision result
-				this.vx -= result.minTranslationVector.x;
-				this.vy -= result.minTranslationVector.y;
+				if (bSolve)
+				{
+					this.vx -= result.minTranslationVector.x / FP.elapsed;
+					this.vy -= result.minTranslationVector.y / FP.elapsed;
+				}
 			}
 			
 			return result;
@@ -140,8 +142,6 @@ package collision
 			return [
 				new Vec2 (width, 0),
 				new Vec2 (0, height),
-				new Vec2 (-width, 0),
-				new Vec2 (0, -height)
 			];
 		}
 		

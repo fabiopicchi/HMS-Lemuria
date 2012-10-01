@@ -1,36 +1,147 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <data>
+	<!-- primeira fase -->
 	<conversation id = "1" hammer="1" hookshot="1" shield="1">
-		<text timeShowing="1" charId="1">
-			hpsdnhpsofdngsdfpgnspdfnfsnfbsnsdopfibnsdifnbpsodfnbosfdnbnkvcxnblxcnvbxvjnbpsnfbpsdfnjnaonoadfnjfnfjfdajnpsaodgnopasfdngblnxvcmbxcvmbx.,cvmnbxc,mvbsdfjgnposfn
+		<text timeShowing="3" charId="2">
+			You know, this isn’t so different from that time when I worked on a steam spaceship.
 		</text>
-		<text timeShowing="1" charId="2">
-			hpsdnhpsofdngsdfpgnspdfnfsnfbsnsdopfibnsdifnbpsodfnbosfdnbnkvcxnblxcnvbxvjnbpsnfbpsdfnjnaonoadfnjfnfjfdajnpsaodgnopasfdngblnxvcmbxcvmbx.,cvmnbxc,mvbsdfjgnposfn
+		<text timeShowing="3" charId="1">
+			And how come you end up in this sinking can?
 		</text>
-		<text timeShowing="1" charId="3">
-			hpsdnhpsofdngsdfpgnspdfnfsnfbsnsdopfibnsdifnbpsodfnbosfdnbnkvcxnblxcnvbxvjnbpsnfbpsdfnjnaonoadfnjfnfjfdajnpsaodgnopasfdngblnxvcmbxcvmbx.,cvmnbxc,mvbsdfjgnposfn
+		<text timeShowing="3" charId="2">
+			This isn’t a sinking can! You youngsters don’t respect anything!
 		</text>
-	</conversation>
-	<conversation id = "2" hammer="0" hookshot="1" shield="1">
-		<text timeShowing="1" charId="1">
-			How can the dead speak?
-		</text>
-		<text timeShowing="1" charId="2">
-			lol
-		</text>
-		<text timeShowing="1" charId="3">
-			is this nigga serious?
+		<text timeShowing="3" charId="1">
+			Youngsters? But you were manufactured the same year as I was....
 		</text>
 	</conversation>
-	<conversation id = "3" hammer="1" hookshot="0" shield="1">
-		<text timeShowing="1" charId="1">
-			blablabla
+	<conversation id = "2" hammer="1" hookshot="1" shield="1">
+		<text timeShowing="3" charId="3">
+			Don’t you feel bad about telling lies to everyone?
 		</text>
-		<text timeShowing="1" charId="2">
-			UHEUHEUHEUHEUHEUHUHEHEUHE
+		<text timeShowing="3" charId="2">
+			What lies? Son, I learned from my time in the Aztec War never to tell lies. 
 		</text>
-		<text timeShowing="1" charId="3">
-			morria
+		<text timeShowing="3" charId="3">
+			Oh...How...Interesting.
+		</text>
+		<text timeShowing="3" charId="2">
+			I can tell all about that if you want.
+		</text>
+		<text timeShowing="3" charId="3">
+			NO! I mean, no.
+		</text>
+	</conversation>
+	<conversation id = "3" hammer="1" hookshot="1" shield="1">
+		<text timeShowing="3" charId="3">
+			Just look at you, it’s like you’re not even trying.
+		</text>
+		<text timeShowing="3" charId="1">
+			Excuse me?
+		</text>
+		<text timeShowing="3" charId="3">
+			Everyone here wants to survive, everyone but you. If you don’t want to get out of this piece of junk, then why are you following us?
+		</text>
+		<text timeShowing="3" charId="1">
+			I want to get out, I want to survive.
+		</text>
+		<text timeShowing="3" charId="3">
+			You need to try harder than that to convince me.
+		</text>
+	</conversation>
+	<conversation id = "4" hammer="1" hookshot="1" shield="1">
+		<text timeShowing="3" charId="3">
+			Oh, what now?
+		</text>
+		<text timeShowing="3" charId="2">
+			I should’ve forseen this. It was just like that time in the HMCS Chicoutimi.
+		</text>
+		<text timeShowing="3" charId="2">
+			One of us will have to pull the lever so the others can escape.
+		</text>
+		<text timeShowing="3" charId="1">
+			So... The one that pulls the lever will get stuck here?
+		</text>
+		<text timeShowing="3" charId="3">
+			...Yes...
+		</text>
+	</conversation>
+	<!-- segunda fase -->
+	<conversation id = "5" hammer="1" hookshot="0" shield="1">
+		<text timeShowing="3" charId="2">
+			Look son, you need to cheer up. You are ruining the morale of the units.
+		</text>
+		<text timeShowing="3" charId="1">
+			Name one thing that could cheer me up.
+		</text>
+		<text timeShowing="3" charId="2">
+			Ha! That’s easy! I learned about this color theory thing when I was at Robot College, and you know what? Blue is a relaxing color! Just go and look into one of those windows there.
+		</text>
+		<text timeShowing="3" charId="1">
+			For some reason that doesn’t cheer me up at all...
+		</text>
+	</conversation>
+	<conversation id = "6" hammer="0" hookshot="1" shield="1">
+		<text timeShowing="3" charId="2">
+			Hookshot! This attittude of yours really gets on my nerves! My career only skyrocketed to where I am standing now because I am nice to other people.
+		</text>
+		<text timeShowing="3" charId="3">
+			As if I care about my career right now.
+		</text>
+		<text timeShowing="3" charId="2">
+			What was that?!
+		</text>
+		<text timeShowing="3" charId="3">
+			….Duly noted, sir.
+		</text>
+		<text timeShowing="3" charId="2">
+			That’s much better.
+		</text>
+	</conversation>
+	<conversation id = "7" hammer="1" hookshot="1" shield="0">
+		<text timeShowing="3" charId="1">
+			It’s hopeless, we won’t get out of here.
+		</text>
+		<text timeShowing="3" charId="3">
+			Thank you for your wise words, Mister Pessimist.
+		</text>
+		<text timeShowing="3" charId="1">
+			I’m not pessimist, Hookshot. I am realistic.
+		</text>
+		<text timeShowing="3" charId="3">
+			Isn’t that what they always say?
+		</text>
+	</conversation>
+	<conversation id = "8" hammer="1" hookshot="1" shield="0">
+		<text timeShowing="3" charId="3">
+			Damn, not again.
+		</text>
+	</conversation>
+	<conversation id = "9" hammer="1" hookshot="0" shield="1">
+		<text timeShowing="3" charId="1">
+			I wasn't hoping to get out anyway...
+		</text>
+	</conversation>
+	<conversation id = "10" hammer="0" hookshot="1" shield="1">
+		<text timeShowing="3" charId="1">
+			Ok son, time has come for us to make a decision again.
+		</text>
+	</conversation>
+	
+	<!--sacrificio-->
+	<conversation id = "100" hammer="0" hookshot="0" shield="1">
+		<text timeShowing="3" charId="2">
+			You’ll tell this story about me in the future, right?
+		</text>
+	</conversation>
+	<conversation id = "101" hammer="1" hookshot="0" shield="0">
+		<text timeShowing="3" charId="1">
+			Don’t they always say it’s better to do something today, not tomorrow?
+		</text>
+	</conversation>
+	<conversation id = "102" hammer="0" hookshot="1" shield="0">
+		<text timeShowing="3" charId="3">
+			I see no one else’s got the guts to do it.
 		</text>
 	</conversation>
 </data>
