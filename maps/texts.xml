@@ -123,7 +123,7 @@
 		</text>
 	</conversation>
 	<conversation id = "10" hammer="0" hookshot="1" shield="1">
-		<text timeShowing="3" charId="1">
+		<text timeShowing="3" charId="2">
 			Ok son, time has come for us to make a decision again.
 		</text>
 	</conversation>
