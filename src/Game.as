@@ -3,7 +3,11 @@ package
 	import com.greensock.easing.Linear;
 	import com.greensock.TweenLite;
 	import flash.display.Sprite;
+	import flash.display.StageAlign;
+	import flash.display.StageDisplayState;
+	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.system.Capabilities;
 	import net.flashpunk.Engine;
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
@@ -28,14 +32,17 @@ package
 			Input.define ("DOWN", Key.DOWN, Key.W);
 			Input.define ("LEFT", Key.LEFT, Key.E);
 			Input.define ("RIGHT", Key.RIGHT, Key.R);
-			Input.define ("SELECTION", Key.ENTER, Key.Z, Key.S, Key.G);
+			Input.define ("SELECTION", Key.ENTER, Key.Z, Key.S, Key.G, Key.A, Key.F);
 			Input.define ("PAUSE", Key.ESCAPE, Key.DIGIT_1, Key.NUMPAD_1);
 		}
 		
 		override public function init():void 
 		{
 			// entry point
-			FP.screen.scale = 2;
+			//FP.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			//FP.stage.scaleMode = StageScaleMode.NO_SCALE;
+			//FP.screen.scale = Capabilities.screenResolutionY / 480;
+			//this.x = - (stage.width - Capabilities.screenResolutionX) / 2;
 			FP.world = new MainMenu();
 		}
 		
@@ -46,6 +53,8 @@ package
 			if (whiteScreen == null)
 			{
 				whiteScreen = new Sprite();
+				whiteScreen.x = FP.engine.x;
+				whiteScreen.y = FP.engine.y;
 				whiteScreen.alpha = 0;
 			}
 			if (!bTransition || bForce)

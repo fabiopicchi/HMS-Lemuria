@@ -120,7 +120,7 @@ package  config
 							}
 							
 							sObject += " }";
-							arReturn.push(JSON.decode (sObject));
+							arReturn.push(com.adobe.serialization.json.JSON.decode (sObject));
 						}
 					}
 				}

@@ -6,7 +6,7 @@ package
 	 */
 	public final class Assets 
 	{
-		
+
 		[Embed(source = '../assets/breakable_block.png')] public static const BREAKABLE_BLOCK:Class;
 		[Embed(source = '../assets/credits.jpg')] public static const CREDITS:Class;
 		[Embed(source = '../assets/door.png')] public static const DOOR:Class;
@@ -36,8 +36,8 @@ package
 		[Embed(source = '../assets/howtoplay.png')] public static const HOW_TO_PLAY:Class;
 		[Embed(source = "../assets/hud-chave_noget.png")] public static const NO_KEY:Class;
 		[Embed(source="../assets/hud-chave_yesget.png")] public static const KEY_GET:Class;
-		
-		
+
+
 		[Embed(source = '../assets/ending.mp3')] public static const ENDING_SONG:Class;
 		[Embed(source = '../assets/hammer.mp3')] public static const HAMMER_SOUND:Class;
 		[Embed(source = '../assets/hammerTime.mp3')] public static const HAMMERTIME_SOUND:Class;
@@ -49,7 +49,7 @@ package
 		[Embed(source = '../assets/shieldTime.mp3')] public static const SHIELDTIME_SOUND:Class;
 		[Embed(source = '../assets/soundtrack.mp3')] public static const MAIN_SONG:Class;
 		[Embed(source = '../assets/steam.mp3')] public static const STEAM_SOUND:Class;
-		
+
 		[Embed(source = '../maps/1.tmx', mimeType = 'application/octet-stream')]public static const stage1:Class;
 		[Embed(source = '../maps/2.tmx', mimeType = 'application/octet-stream')]public static const stage2:Class;
 		[Embed(source = '../maps/3.tmx', mimeType = 'application/octet-stream')]public static const stage3:Class;
@@ -62,15 +62,15 @@ package
 		[Embed(source = '../maps/walls3.txt', mimeType = 'application/octet-stream')]public static const walls3:Class;
 		[Embed(source = '../maps/water3.txt', mimeType = 'application/octet-stream')]public static const water3:Class;
 		[Embed(source = '../maps/ground3.txt', mimeType = 'application/octet-stream')]public static const map3:Class;
-		
+
 		[Embed(source = '../maps/texts.xml', mimeType = 'application/octet-stream')]private static const TEXTS:Class;
 		public static const XML_CONVERSATIONS : XML = new XML (new TEXTS());
-		
+
 		public function Assets() 
 		{
-			
+
 		}
-		
+
 	}
 
 }
